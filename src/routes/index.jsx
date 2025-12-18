@@ -10,21 +10,17 @@ const router = createBrowserRouter([
     path: "/",
     element: <App />,
     children: [
-      // === NHÁNH USER & PUBLIC (Chứa trang Login) ===
       {
-        path: "/",
         element: <MainLayout />,
         children: [
-          { path: "", element: <Home /> },
+          { index: true, element: <Home /> },
           { path: "login", element: <Login /> },
         ],
       },
-
-      // === NHÁNH ADMIN (Riêng biệt) ===
       {
         path: "admin",
         element: <AdminLayout />,
-        children: [{}],
+        children: [],
       },
     ],
   },
