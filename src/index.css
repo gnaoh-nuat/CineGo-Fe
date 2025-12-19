@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: white !important;
+  caret-color: white !important;
+  transition: background-color 9999s ease-in-out 0s;
+  color-scheme: dark !important;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE và Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+body {
+  margin: 0;
+  /* Đặt màu nền là #121212 (giống hệt biến background-dark trong config của bạn) */
+  background-color: #121212;
+  /* Đặt màu chữ mặc định là trắng để tránh chữ đen trên nền đen khi chưa load xong */
+  color: white;
+}

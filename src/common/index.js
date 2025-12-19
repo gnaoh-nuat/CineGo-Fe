@@ -1,3 +1,5 @@
+// src/common/index.js
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const SummaryApi = {
@@ -28,6 +30,28 @@ const SummaryApi = {
   },
   changePassword: {
     url: `${BASE_URL}/auth/change-password`,
+    method: "put",
+  },
+
+  // Movie APIs
+  getMovies: {
+    url: `${BASE_URL}/movies`,
+    method: "get",
+  },
+
+  //People APIs
+  getPeoples: {
+    url: `${BASE_URL}/peoples`,
+    method: "get",
+  },
+
+  // User APIs
+  updateUser: {
+    url: `${BASE_URL}/users`,
+    method: "put",
+  },
+  uploadAvatar: {
+    url: `${BASE_URL}/users/avatar`,
     method: "put",
   },
 };
