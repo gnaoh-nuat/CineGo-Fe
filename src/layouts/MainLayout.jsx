@@ -5,7 +5,10 @@ import Footer from "../components/User/Footer";
 
 const MainLayout = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display">
+    // Đã thay đổi:
+    // 1. bg-background-light -> bg-background-dark (Luôn dùng màu #121212)
+    // 2. text-slate-900 -> text-white (Luôn dùng chữ trắng trên nền tối)
+    <div className="flex flex-col min-h-screen bg-background-dark text-white font-display">
       <Header />
 
       <main className="flex-grow w-full pt-20">

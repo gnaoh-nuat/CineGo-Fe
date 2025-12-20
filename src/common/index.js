@@ -38,10 +38,22 @@ const SummaryApi = {
     url: `${BASE_URL}/movies`,
     method: "get",
   },
+  getMovieDetail: {
+    url: `${BASE_URL}/movies`, // Khi gọi API cần nối thêm ID: url + '/' + id
+    method: "get",
+  },
+  getMoviesByGenre: {
+    url: `${BASE_URL}/movies/genre`, // query params: page, size, genre_id
+    method: "get",
+  },
 
   //People APIs
   getPeoples: {
     url: `${BASE_URL}/peoples`,
+    method: "get",
+  },
+  getPeopleDetail: {
+    url: `${BASE_URL}/peoples`, // Khi gọi API cần nối thêm ID: url + '/' + id
     method: "get",
   },
 

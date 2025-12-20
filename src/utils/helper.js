@@ -100,3 +100,43 @@ export const formatDateForInput = (dateString) => {
     return "";
   }
 };
+
+/**
+ * Format ngày hiển thị cho người dùng (dd/mm/yyyy)
+ * @param {string} dateString
+ * @returns {string}
+ */
+export const formatDateForDisplay = (dateString) => {
+  if (!dateString) return "N/A";
+  try {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat("vi-VN").format(date);
+  } catch (error) {
+    return dateString;
+  }
+};
+
+/**
+ * Lấy ảnh poster chính từ mảng url
+ * @param {Array} posterUrls
+ * @returns {string}
+ */
+export const getPrimaryPoster = (posterUrls) => {
+  if (Array.isArray(posterUrls) && posterUrls.length > 0) {
+    return posterUrls[0];
+  }
+  // Ảnh mặc định nếu không có poster
+  return "https://via.placeholder.com/300x450?text=No+Image";
+};
+
+/**
+ * Lấy tên thể loại đầu tiên (dùng cho thẻ card nhỏ)
+ * @param {Array} genres
+ * @returns {string}
+ */
+export const getFirstGenre = (genres) => {
+  if (Array.isArray(genres) && genres.length > 0) {
+    return genres[0].name;
+  }
+  return "Phim";
+};
