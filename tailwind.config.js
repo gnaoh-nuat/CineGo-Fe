@@ -12,6 +12,7 @@ export default {
       },
       fontFamily: {
         display: ["Spline Sans", "sans-serif"],
+        sans: ["Manrope", "ui-sans-serif", "system-ui"],
       },
       animation: {
         "fade-in-up": "fadeInUp 0.5s ease-out forwards",
