@@ -295,7 +295,7 @@ const Header = () => {
                     tin cá nhân
                   </Link>
                   <Link
-                    to="/orders"
+                    to="/my-tickets"
                     className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-white/80 hover:text-white hover:bg-white/10 transition-all"
                   >
                     <MdConfirmationNumber className="text-xl text-primary" /> Vé
