@@ -140,3 +140,74 @@ export const getFirstGenre = (genres) => {
   }
   return "Phim";
 };
+
+/**
+ * Sắp xếp danh sách phim theo tiêu chí.
+ * @param {Array} items
+ * @param {"POPULAR"|"TITLE_ASC"|"NEWEST"|"RATING"} sortBy
+ * @returns {Array}
+ */
+export const sortMovies = (items, sortBy) => {
+  const safeItems = Array.isArray(items) ? [...items] : [];
+  switch (sortBy) {
+    case "TITLE_ASC":
+      return safeItems.sort((a, b) =>
+        (a.title || "").localeCompare(b.title || "")
+      );
+    case "NEWEST":
+      return safeItems.sort(
+        (a, b) => new Date(b.release_date || 0) - new Date(a.release_date || 0)
+      );
+    case "RATING":
+      return safeItems;
+    default:
+      return safeItems;
+  }
+};
+
+/**
+ * Format điểm đánh giá (VD: 8.5)
+ * @param {number} score
+ * @returns {string}
+ */
+export const formatRating = (score) => {
+  if (!score) return "N/A";
+  return parseFloat(score).toFixed(1);
+};
+
+/**
+ * Tạo mảng phân trang (VD: [1, 'DOTS', 4, 5, 6, 'DOTS', 10])
+ * @param {number} currentPage
+ * @param {number} totalPages
+ * @returns {Array}
+ */
+export const getPaginationRange = (currentPage, totalPages) => {
+  const delta = 1; // Số trang hiển thị 2 bên trang hiện tại
+  const range = [];
+  const rangeWithDots = [];
+  let l;
+
+  for (let i = 1; i <= totalPages; i++) {
+    if (
+      i === 1 ||
+      i === totalPages ||
+      (i >= currentPage - delta && i <= currentPage + delta)
+    ) {
+      range.push(i);
+    }
+  }
+
+  for (let i of range) {
+    if (l) {
+      if (i - l === 2) {
+        rangeWithDots.push(l + 1);
+      } else if (i - l !== 1) {
+        rangeWithDots.push("DOTS");
+      }
+    }
+    rangeWithDots.push(i);
+    l = i;
+  }
+
+  return rangeWithDots;
+};

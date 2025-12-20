@@ -11,6 +11,7 @@ import ForgotPassword from "../pages/ForgotPassword";
 import Profile from "../pages/Profile";
 import About from "../pages/About";
 import MovieDetail from "../pages/MovieDetail";
+import MovieSearch from "../pages/MovieSearch";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
           { path: "forgot-password", element: <ForgotPassword /> },
           { path: "profile", element: <Profile /> },
           { path: "about", element: <About /> },
+          { path: "movies", element: <MovieSearch /> },
           { path: "movie/:id", element: <MovieDetail /> },
         ],
       },
