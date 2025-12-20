@@ -263,3 +263,23 @@ export const getPaginationRange = (currentPage, totalPages) => {
 
   return rangeWithDots;
 };
+
+// Chuẩn hóa chuỗi QR: nếu backend trả base64 thuần thì thêm prefix data URI
+export const normalizeQrCode = (qr) => {
+  if (!qr) return null;
+  return qr.startsWith("data:") ? qr : `data:image/png;base64,${qr}`;
+};
+
+// Ghép danh sách ghế từ Tickets
+export const formatSeats = (tickets = []) => {
+  return tickets
+    .map((t) => {
+      const row = t?.Seat?.row;
+      const number = t?.Seat?.number;
+      if (row && number) return `${row}${number}`;
+      if (number) return `${number}`;
+      return t?.seat_id || "";
+    })
+    .filter(Boolean)
+    .join(", ");
+};

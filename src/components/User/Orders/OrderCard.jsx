@@ -12,6 +12,7 @@ import {
   formatDateTime,
   getPrimaryPoster,
   mapOrderStatus,
+  formatSeats,
 } from "../../../utils/helper";
 
 const OrderCard = ({ order, onShowQr, onViewDetail }) => {
@@ -19,14 +20,8 @@ const OrderCard = ({ order, onShowQr, onViewDetail }) => {
   const movie = ticket?.Showtime?.Movie;
   const showtime = ticket?.Showtime;
 
-  // Xử lý hiển thị danh sách ghế gọn gàng
-  const seatList = order?.Tickets?.map((t) =>
-    t.Seat?.row && t.Seat?.number
-      ? `${t.Seat.row}${t.Seat.number}`
-      : t.Seat?.number || t.seat_id
-  );
-  const seats = seatList?.join(", ") || "";
-  const seatCount = seatList?.length || 0;
+  const seats = formatSeats(order?.Tickets || []);
+  const seatCount = order?.Tickets?.length || 0;
 
   const statusMeta = mapOrderStatus(order?.status);
 
@@ -62,13 +57,8 @@ const OrderCard = ({ order, onShowQr, onViewDetail }) => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-white/70">
               <div className="flex items-center gap-2">
                 <MdAccessTime className="text-primary text-lg" />
-                <span>
-                  {formatDateTime(showtime?.start_time)?.split(" - ")[0] || ""}
-                  <span className="text-white/40 mx-1">|</span>
-                  <span className="text-white font-medium">
-                    {formatDateTime(showtime?.start_time)?.split(" - ")[1] ||
-                      ""}
-                  </span>
+                <span className="text-white font-medium">
+                  {formatDateTime(showtime?.start_time)}
                 </span>
               </div>
               <div className="flex items-center gap-2">

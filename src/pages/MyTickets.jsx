@@ -3,7 +3,7 @@ import OrderFilter from "../components/User/Orders/OrderFilter";
 import OrderList from "../components/User/Orders/OrderList";
 import OrderDetail from "../components/User/Orders/OrderDetail";
 import SummaryApi from "../common";
-import { formatCurrency } from "../utils/helper";
+import { formatCurrency, normalizeQrCode } from "../utils/helper";
 import { MdClose } from "react-icons/md";
 
 const MyTickets = () => {
@@ -66,12 +66,9 @@ const MyTickets = () => {
 
     try {
       // Ưu tiên dùng QR đã có trong order (nếu backend trả sẵn)
-      const existingQr = order.qr_code_url || order.qrCodeUrl;
+      const existingQr = normalizeQrCode(order.qr_code_url || order.qrCodeUrl);
       if (existingQr) {
-        const normalizedExisting = existingQr.startsWith("data:")
-          ? existingQr
-          : `data:image/png;base64,${existingQr}`;
-        setQrImage(normalizedExisting);
+        setQrImage(existingQr);
         return;
       }
 
@@ -93,12 +90,9 @@ const MyTickets = () => {
       });
 
       const data = await res.json();
-      const qrUrl = data?.data?.qr_code_url;
+      const qrUrl = normalizeQrCode(data?.data?.qr_code_url);
       if (data?.success && qrUrl) {
-        const normalizedQr = qrUrl.startsWith("data:")
-          ? qrUrl
-          : `data:image/png;base64,${qrUrl}`;
-        setQrImage(normalizedQr);
+        setQrImage(qrUrl);
       } else {
         console.error(
           "Không tạo được QR:",
