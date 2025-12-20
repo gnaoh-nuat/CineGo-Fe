@@ -1,5 +1,5 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
-import SummaryApi from "../common/index.js";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import SummaryApi from "../common"; // Import API config
 
 const AuthContext = createContext();
 
@@ -7,102 +7,103 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // --- HÀM LOGIN ---
-  const login = async (email, password) => {
+  // Hàm gọi API lấy thông tin User
+  const fetchUserDetails = async () => {
+    // Lấy token từ localStorage (hoặc cookie tùy cách bạn lưu)
+    // Giả sử bạn lưu token trong localStorage với key là "accessToken"
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch(SummaryApi.login.url, {
-        method: SummaryApi.login.method,
+      const response = await fetch(SummaryApi.myInfo.url, {
+        method: SummaryApi.myInfo.method,
         headers: {
           "content-type": "application/json",
+          // Quan trọng: Gửi kèm Token vào Header
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ email, password }),
       });
 
       const result = await response.json();
 
-      // Kiểm tra dựa trên cấu trúc JSON bạn cung cấp
       if (result.success) {
-        // 1. Lưu token vào localStorage để dùng cho các request sau
-        localStorage.setItem("token", result.data.accessToken);
+        // API trả về: { data: { user: { ... } } }
+        setUser(result.data.user);
+      } else {
+        // Nếu token hết hạn hoặc lỗi, logout luôn
+        console.error("Fetch user info failed:", result.message);
+        setUser(null);
+        localStorage.removeItem("accessToken");
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        // 2. Lưu thông tin user vào State
-        // Lưu ý: Nếu backend trả về ít thông tin, bạn chỉ lưu tạm role để redirect
-        // Sau đó gọi hàm fetchUserDetails để lấy full info nếu cần
-        setUser({
-          role: result.data.role,
-          // Thêm các thông tin khác nếu backend trả về (vd: result.data.name)
-        });
+  // Gọi API lấy thông tin ngay khi app khởi chạy
+  useEffect(() => {
+    fetchUserDetails();
+  }, []);
 
-        // Trả về kết quả để trang Login xử lý chuyển hướng
+  // Hàm Login
+  const login = async (email, password) => {
+    try {
+      const response = await fetch(SummaryApi.login.url, {
+        method: SummaryApi.login.method,
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const result = await response.json();
+
+      if (result.success) {
+        // 1. Lưu token
+        localStorage.setItem("accessToken", result.data.accessToken);
+
+        // 2. Gọi API lấy thông tin chi tiết user ngay lập tức
+        await fetchUserDetails();
+
         return {
           success: true,
           message: result.message,
           role: result.data.role,
         };
       } else {
-        return {
-          success: false,
-          message: result.message || "Đăng nhập thất bại",
-        };
+        return { success: false, message: result.message };
       }
     } catch (error) {
-      console.error("Login error:", error);
-      return {
-        success: false,
-        message: "Lỗi kết nối server",
-      };
+      return { success: false, message: "Lỗi kết nối server!" };
     }
   };
 
-  // --- HÀM LẤY THÔNG TIN USER (Dùng khi F5 trang) ---
-  const fetchUserDetails = async () => {
-    const token = localStorage.getItem("token");
-
-    // Nếu không có token thì thôi, ko gọi API
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-
-    try {
-      // Gọi API myInfo để lấy lại thông tin user từ token
-      const response = await fetch(SummaryApi.myInfo.url, {
-        method: SummaryApi.myInfo.method,
-        headers: {
-          // Gửi kèm token lên header
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setUser(data.data); // Cập nhật lại user vào context
-      } else {
-        // Token hết hạn hoặc không hợp lệ -> Xóa đi
-        localStorage.removeItem("token");
-        setUser(null);
-      }
-    } catch (error) {
-      console.log("Error fetch user details", error);
-    } finally {
-      setLoading(false);
-    }
+  // Hàm Register (Giữ nguyên hoặc cập nhật tùy logic)
+  const register = async (email, password, full_name, phone) => {
+    // ... logic đăng ký của bạn
+    // Nếu API đăng ký trả về token luôn thì cũng xử lý tương tự login
+    return { success: true, message: "Đăng ký thành công" }; // Placeholder
   };
 
-  // Gọi fetchUserDetails 1 lần khi App vừa chạy
-  useEffect(() => {
-    fetchUserDetails();
-  }, []);
+  // Hàm Logout
+  const logout = () => {
+    localStorage.removeItem("accessToken");
+    setUser(null);
+    setLoading(false);
+  };
 
   return (
     <AuthContext.Provider
-      value={{ user, setUser, login, fetchUserDetails, loading }}
+      value={{ user, login, logout, register, fetchUserDetails, loading }}
     >
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Hook để dùng nhanh ở các component khác
 export const useAuth = () => useContext(AuthContext);

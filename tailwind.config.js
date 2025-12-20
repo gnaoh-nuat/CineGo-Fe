@@ -5,10 +5,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#ea2a33", // Màu đỏ
+        primary: "#ea2a33", // Đỏ thương hiệu
         "background-light": "#f8f6f6",
-        "background-dark": "#121212",
-        "surface-dark": "#1e1e1e",
+        "background-dark": "#121212", // Đen nền chính
+        "surface-dark": "#1e1e1e", // Đen xám (cho card/dropdown)
       },
       fontFamily: {
         display: ["Spline Sans", "sans-serif"],

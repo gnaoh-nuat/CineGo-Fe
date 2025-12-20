@@ -1,3 +1,5 @@
+// src/common/index.js
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const SummaryApi = {
@@ -29,6 +31,158 @@ const SummaryApi = {
   changePassword: {
     url: `${BASE_URL}/auth/change-password`,
     method: "put",
+  },
+
+  // Movie APIs
+  getMovies: {
+    url: `${BASE_URL}/movies`,
+    method: "get",
+  },
+  getMovieDetail: {
+    url: `${BASE_URL}/movies`, // Khi gọi API cần nối thêm ID: url + '/' + id
+    method: "get",
+  },
+  getMoviesByGenre: {
+    url: `${BASE_URL}/movies/genre`, // query params: page, size, genre_id
+    method: "get",
+  },
+
+  //People APIs
+  getPeoples: {
+    url: `${BASE_URL}/peoples`,
+    method: "get",
+  },
+  getPeopleDetail: {
+    url: `${BASE_URL}/peoples`, // Khi gọi API cần nối thêm ID: url + '/' + id
+    method: "get",
+  },
+
+  // User APIs
+  updateUser: {
+    url: `${BASE_URL}/users`,
+    method: "put",
+  },
+  uploadAvatar: {
+    url: `${BASE_URL}/users/avatar`,
+    method: "put",
+  },
+
+  // Genre APIs
+  getGenres: {
+    url: `${BASE_URL}/genres`,
+    method: "get",
+  },
+  getGenreDetail: {
+    url: `${BASE_URL}/genres`, // Khi gọi API cần nối thêm ID: url + '/' + id
+    method: "get",
+  },
+
+  // Cinema APIs
+  getCinemas: {
+    url: `${BASE_URL}/cinemas`, // query: page, size, province_id
+    method: "get",
+  },
+  getCinemaDetail: {
+    url: `${BASE_URL}/cinemas`, // + '/{id}'
+    method: "get",
+  },
+  getCinemaRooms: {
+    url: `${BASE_URL}/cinema-rooms`, // + '/{id}'
+    method: "get",
+  },
+
+  // Province APIs
+  getProvinces: {
+    url: `${BASE_URL}/provinces`, // query: page, size
+    method: "get",
+  },
+  getProvinceDetail: {
+    url: `${BASE_URL}/provinces`, // + '/{id}'
+    method: "get",
+  },
+
+  // File upload APIs
+  uploadImage: {
+    url: `${BASE_URL}/files/upload/image`,
+    method: "post",
+  },
+  uploadVideo: {
+    url: `${BASE_URL}/files/upload/video`,
+    method: "post",
+  },
+
+  // Food APIs
+  getFoods: {
+    url: `${BASE_URL}/foods`, // query: page, size, search
+    method: "get",
+  },
+  getFoodDetail: {
+    url: `${BASE_URL}/foods`, // + '/{id}'
+    method: "get",
+  },
+
+  // Order APIs
+  createOrder: {
+    url: `${BASE_URL}/orders`,
+    method: "post",
+  },
+  orderVnpayReturn: {
+    url: `${BASE_URL}/orders/vnpay-return`,
+    method: "post",
+  },
+  getOrderHistory: {
+    url: `${BASE_URL}/orders/history`,
+    method: "get",
+  },
+  getOrderByBookingCode: {
+    url: `${BASE_URL}/orders/booking`, // query: booking_code
+    method: "get",
+  },
+
+  // QR APIs
+  generateQr: {
+    url: `${BASE_URL}/qr/generate`,
+    method: "post",
+  },
+
+  // Seat APIs
+  getSeatsByRoom: {
+    url: `${BASE_URL}/seats/room`, // + '/{roomId}'
+    method: "get",
+  },
+  getSeatDetail: {
+    url: `${BASE_URL}/seats`, // + '/{id}'
+    method: "get",
+  },
+
+  // Showtime APIs
+  getShowtimes: {
+    url: `${BASE_URL}/showtimes`, // query: movie_id, date, province_id, format
+    method: "get",
+  },
+  getShowtimeSeats: {
+    url: `${BASE_URL}/showtimes`, // + '/{showtimeId}/seats'
+    method: "get",
+  },
+
+  // User detail
+  getUserDetail: {
+    url: `${BASE_URL}/users`, // + '/{id}'
+    method: "get",
+  },
+
+  // Voucher APIs
+  getMyVouchers: {
+    url: `${BASE_URL}/vouchers/my-vouchers`,
+    method: "get",
+  },
+  applyVoucher: {
+    url: `${BASE_URL}/vouchers/apply`,
+    method: "post",
+  },
+  getVoucherDetail: {
+    url: `${BASE_URL}/vouchers`, // + '/{id}'
+    method: "get",
   },
 };
 
