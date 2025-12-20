@@ -153,11 +153,9 @@ const SummaryApi = {
     url: `${BASE_URL}/orders/booking`, // query: booking_code
     method: "get",
   },
-
-  // QR APIs
-  generateQr: {
-    url: `${BASE_URL}/qr/generate`,
-    method: "post",
+  getOrderDetail: {
+    url: `${BASE_URL}/orders`, // + '/{id}'
+    method: "get",
   },
 
   // Seat APIs

@@ -10,10 +10,10 @@ import Profile from "../pages/Profile";
 import About from "../pages/About";
 import MovieDetail from "../pages/MovieDetail";
 import MovieSearch from "../pages/MovieSearch";
+import MyTickets from "../pages/MyTickets";
 
 import Dashboard from "../pages/admin/Dashboard";
 import MovieManagement from "../pages/admin/MovieManagement";
-
 
 const router = createBrowserRouter([
   {
@@ -30,15 +30,17 @@ const router = createBrowserRouter([
           { path: "profile", element: <Profile /> },
           { path: "about", element: <About /> },
           { path: "movies", element: <MovieSearch /> },
+          { path: "my-tickets", element: <MyTickets /> },
           { path: "movie/:id", element: <MovieDetail /> },
         ],
       },
       {
         path: "admin",
         element: <AdminLayout />,
+        children: [{ index: true, element: <Dashboard /> }],
         children: [
-          { index: true, element: <Dashboard /> },  
-          { path: "movies", element: <MovieManagement />},
+          { index: true, element: <Dashboard /> },
+          { path: "movies", element: <MovieManagement /> },
         ],
       },
       {

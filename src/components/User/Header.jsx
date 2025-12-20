@@ -36,11 +36,9 @@ const Header = () => {
     }
   }, []);
 
-  // 2. Xử lý Avatar URL (SỬA Ở ĐÂY)
-  // Ưu tiên 'image_url' vì đó là trường chính xác từ API của bạn
+  // 2. Xử lý Avatar URL
   const avatarUrl = user?.image_url || user?.avatar || user?.profile_pic;
 
-  // Reset lỗi ảnh khi url thay đổi
   useEffect(() => {
     setImgError(false);
   }, [avatarUrl]);
@@ -103,12 +101,14 @@ const Header = () => {
     return name ? name.charAt(0).toUpperCase() : "U";
   };
 
+  // --- SỬA PHẦN NÀY: Thêm ID cho đúng với Database của bạn ---
+  // Lưu ý: ID này phải khớp với ID trong bảng genres của database
   const GENRES = [
-    { name: "Hành động", path: "/movies/action" },
-    { name: "Phiêu lưu", path: "/movies/adventure" },
-    { name: "Hoạt hình", path: "/movies/animation" },
-    { name: "Hài", path: "/movies/comedy" },
-    { name: "Tâm lý", path: "/movies/drama" },
+    { id: "1", name: "Hành động" },
+    { id: "9", name: "Phiêu lưu" }, // Kiểm tra lại ID trong DB
+    { id: "6", name: "Hoạt hình" },
+    { id: "4", name: "Hài" }, // Kiểm tra lại ID trong DB
+    { id: "7", name: "Tâm lý" },
   ];
 
   return (
@@ -134,8 +134,9 @@ const Header = () => {
               <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 absolute top-full left-0 w-48 bg-surface-dark border border-white/10 rounded-xl shadow-2xl py-2 mt-2 transition-all duration-300 transform origin-top translate-y-2 group-hover:translate-y-0">
                 {GENRES.map((genre) => (
                   <Link
-                    key={genre.path}
-                    to={genre.path}
+                    key={genre.id}
+                    // --- SỬA PHẦN NÀY: Dùng genre_id thay vì genre ---
+                    to={`/movies?genre_id=${genre.id}`}
                     className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/10 transition-colors"
                   >
                     {genre.name}
@@ -158,6 +159,7 @@ const Header = () => {
           </nav>
         </div>
 
+        {/* ... (Phần Search & Auth giữ nguyên không đổi) ... */}
         {/* RIGHT: SEARCH & AUTH */}
         <div className="flex items-center gap-6">
           <div className="relative group hidden lg:block">
@@ -181,7 +183,6 @@ const Header = () => {
               />
             </div>
 
-            {/* SUGGESTION DROPDOWN */}
             {showSuggest && (
               <div className="absolute left-0 right-0 mt-3 bg-[#1e1e1e] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-40 ring-1 ring-white/5">
                 {suggestLoading && (
@@ -252,7 +253,6 @@ const Header = () => {
             )}
           </div>
 
-          {/* AUTH SECTION */}
           {user ? (
             <div className="relative group h-20 flex items-center cursor-pointer">
               <div className="size-10 rounded-full p-0.5 border-2 border-transparent group-hover:border-primary transition-all overflow-hidden bg-surface-dark flex items-center justify-center shadow-lg">
@@ -272,7 +272,6 @@ const Header = () => {
                 )}
               </div>
 
-              {/* Dropdown Menu */}
               <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 absolute top-full right-0 w-72 bg-surface-dark border border-white/10 rounded-xl shadow-2xl py-2 mt-2 transition-all duration-300 transform origin-top translate-y-2 group-hover:translate-y-0 z-50">
                 <div className="px-5 py-4 border-b border-white/10 mb-2 bg-white/5">
                   <p className="text-sm text-white/50 uppercase tracking-wider text-xs font-bold mb-1">
@@ -295,7 +294,7 @@ const Header = () => {
                     tin cá nhân
                   </Link>
                   <Link
-                    to="/orders"
+                    to="/my-tickets"
                     className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-white/80 hover:text-white hover:bg-white/10 transition-all"
                   >
                     <MdConfirmationNumber className="text-xl text-primary" /> Vé

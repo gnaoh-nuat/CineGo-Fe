@@ -141,6 +141,58 @@ export const getFirstGenre = (genres) => {
   return "Phim";
 };
 
+export const formatCurrency = (amount) => {
+  const num = Number(amount);
+  if (Number.isNaN(num)) return "0 đ";
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+    maximumFractionDigits: 0,
+  }).format(num);
+};
+
+export const formatDateTime = (dateString) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return "";
+  return new Intl.DateTimeFormat("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(date);
+};
+
+export const mapOrderStatus = (status) => {
+  const upper = (status || "").toUpperCase();
+  switch (upper) {
+    case "SUCCESSFUL":
+      return {
+        text: "Hoàn thành",
+        badge: "bg-green-500/10 text-green-400 border border-green-500/30",
+      };
+    case "PROCESSING":
+    case "PENDING":
+      return {
+        text: "Đang xử lý",
+        badge: "bg-yellow-500/10 text-yellow-400 border border-yellow-500/30",
+      };
+    case "CANCELLED":
+    case "CANCELED":
+    case "FAILED":
+      return {
+        text: "Đã hủy",
+        badge: "bg-red-500/10 text-red-400 border border-red-500/30",
+      };
+    default:
+      return {
+        text: "Khác",
+        badge: "bg-white/10 text-white/70 border border-white/20",
+      };
+  }
+};
+
 /**
  * Sắp xếp danh sách phim theo tiêu chí.
  * @param {Array} items
@@ -210,4 +262,24 @@ export const getPaginationRange = (currentPage, totalPages) => {
   }
 
   return rangeWithDots;
+};
+
+// Chuẩn hóa chuỗi QR: nếu backend trả base64 thuần thì thêm prefix data URI
+export const normalizeQrCode = (qr) => {
+  if (!qr) return null;
+  return qr.startsWith("data:") ? qr : `data:image/png;base64,${qr}`;
+};
+
+// Ghép danh sách ghế từ Tickets
+export const formatSeats = (tickets = []) => {
+  return tickets
+    .map((t) => {
+      const row = t?.Seat?.row;
+      const number = t?.Seat?.number;
+      if (row && number) return `${row}${number}`;
+      if (number) return `${number}`;
+      return t?.seat_id || "";
+    })
+    .filter(Boolean)
+    .join(", ");
 };
