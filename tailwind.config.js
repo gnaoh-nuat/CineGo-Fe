@@ -9,6 +9,12 @@ export default {
         "background-light": "#f8f6f6",
         "background-dark": "#121212", // Đen nền chính
         "surface-dark": "#1e1e1e", // Đen xám (cho card/dropdown)
+
+        success: "#22c55e", // green-500
+        info: "#3b82f6",    // blue-500
+        warning: "#f97316", // orange-500
+        danger: "#ef4444", // red-500
+        purple: "#a855f7", // purple-500
       },
       fontFamily: {
         display: ["Spline Sans", "sans-serif"],

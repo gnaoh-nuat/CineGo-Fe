@@ -12,13 +12,41 @@ export default function Dashboard() {
         </h2>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Doanh thu tổng" value="1.2 Tỷ VNĐ" />
-        <StatCard title="Vé bán ra" value="8,450" />
-        <StatCard title="F&B" value="350 Tr VNĐ" />
-        <StatCard title="User mới" value="125" />
-      </div>
+<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  <StatCard
+    title="Doanh thu tổng"
+    value="1.2 Tỷ VNĐ"
+    icon="payments"
+    trend="+12%"
+    color="success"
+  />
+
+  <StatCard
+    title="Vé bán ra"
+    value="8,450"
+    icon="confirmation_number"
+    trend="+5%"
+    color="blue"
+  />
+
+  <StatCard
+    title="Doanh thu F&B"
+    value="350 Tr VNĐ"
+    icon="fastfood"
+    trend="+8%"
+    color="orange"
+  />
+
+  <StatCard
+    title="User mới"
+    value="125"
+    icon="person_add"
+    trend="+22%"
+    color="purple"
+  />
+</div>
+
+
 
       {/* <RevenueChart /> */}
 

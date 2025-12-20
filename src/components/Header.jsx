@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
-    // SỬA: Dùng trực tiếp mã màu bg-[#121212] thay vì bg-background-dark để chắc chắn ra màu đen
-    // Tăng độ đậm lên /90 hoặc bỏ luôn /90 nếu muốn đen đặc
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#121212]/90 backdrop-blur-md border-b border-white/10 font-sans">
       <div className="max-w-[1440px] mx-auto px-6 h-20 flex items-center justify-between">
         {/* --- LEFT SECTION: LOGO & NAV --- */}

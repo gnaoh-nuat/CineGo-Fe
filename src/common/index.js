@@ -34,10 +34,25 @@ const SummaryApi = {
   },
 
   // Movie APIs
+
+  // CRUD Movies - admin
   getMovies: {
     url: `${BASE_URL}/movies`,
     method: "get",
   },
+  createMovie: {
+    url: `${BASE_URL}/movies`,
+    method: "post",
+  },
+  updateMovie: {
+    url: `${BASE_URL}/movies`, // Sẽ dùng url + '/' + id
+    method: "put",
+  },
+  deleteMovie: {
+    url: `${BASE_URL}/movies`, // Sẽ dùng url + '/' + id
+    method: "delete",
+  },
+
   getMovieDetail: {
     url: `${BASE_URL}/movies`, // Khi gọi API cần nối thêm ID: url + '/' + id
     method: "get",
