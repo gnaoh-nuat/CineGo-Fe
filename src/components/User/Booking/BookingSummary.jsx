@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { formatCurrency, formatTimeHM, seatLabel } from "../../../utils/helper";
 import {
   MdLocalOffer,
@@ -7,6 +7,9 @@ import {
   MdCheckCircle,
   MdCancel,
   MdMovie,
+  MdKeyboardArrowDown,
+  MdLunchDining,
+  MdChevronRight,
 } from "react-icons/md";
 
 const BookingSummary = ({
@@ -27,7 +30,9 @@ const BookingSummary = ({
   checkoutLoading = false,
 }) => {
   const [voucherCode, setVoucherCode] = useState("");
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  // State quản lý đóng mở dropdown
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   // Sync voucher code khi apply thành công
   useEffect(() => {
@@ -36,21 +41,21 @@ const BookingSummary = ({
     }
   }, [appliedVoucher]);
 
-  const handleSelectVoucher = (e) => {
-    const code = e.target.value;
-    setVoucherCode(code);
-    if (code) onApplyVoucher?.(code);
-  };
+  // Đóng dropdown khi click ra ngoài
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-  const toggleDropdown = () => {
-    if (!dropdownOpen && onRefreshVouchers) onRefreshVouchers();
-    setDropdownOpen((prev) => !prev);
-  };
-
-  const handlePickVoucher = (code) => {
-    setVoucherCode(code);
-    setDropdownOpen(false);
-    if (code) onApplyVoucher?.(code);
+  const handleSelectVoucher = (code) => {
+    setVoucherCode(code || "");
+    setIsOpen(false);
+    onApplyVoucher?.(code || null);
   };
 
   const renderFoodItem = (foodId) => {
@@ -61,9 +66,9 @@ const BookingSummary = ({
     return (
       <div
         key={foodId}
-        className="flex justify-between items-center text-sm group"
+        className="flex justify-between items-center text-sm py-1"
       >
-        <span className="text-white/70 group-hover:text-white transition-colors truncate max-w-[60%]">
+        <span className="text-white/70 truncate max-w-[60%]">
           {qty}x {food.name}
         </span>
         <span className="font-semibold text-white">
@@ -74,85 +79,75 @@ const BookingSummary = ({
   };
 
   return (
-    <aside className="bg-surface-dark border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col h-full max-h-[calc(100vh-100px)] sticky top-24">
-      {/* 1. Header Info */}
-      <div className="p-5 border-b border-white/10 bg-white/[0.02] flex gap-4 shrink-0">
-        <div className="w-20 h-28 rounded-lg overflow-hidden border border-white/10 shadow-lg shrink-0 bg-black">
-          <img
-            src={
-              showtimeInfo.posterUrl ||
-              "https://placehold.co/150x220?text=No+Image"
-            }
-            alt="poster"
-            className="w-full h-full object-cover"
-          />
+    <aside className="bg-surface-dark border border-white/10 rounded-2xl shadow-2xl flex flex-col h-full max-h-[calc(100vh-100px)] sticky top-24 overflow-hidden">
+      {/* 1. Header Info (Phim, Rạp) */}
+      <div className="p-6 border-b border-white/10 bg-white/[0.02]">
+        <div className="flex gap-4 items-start mb-5">
+          <div className="w-20 rounded-lg overflow-hidden shadow-lg border border-white/10 shrink-0 bg-white/5 aspect-[2/3]">
+            <img
+              src={
+                showtimeInfo.posterUrl ||
+                "https://placehold.co/150x220?text=No+Image"
+              }
+              alt="poster"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-bold text-white text-lg leading-tight mb-1 line-clamp-2">
+              {showtimeInfo.movieTitle || "Phim chưa cập nhật"}
+            </h3>
+            <p className="text-white/60 text-sm mb-2">
+              {showtimeInfo.format || "2D"} • {showtimeInfo.ageRating || "T13"}
+            </p>
+          </div>
         </div>
-        <div className="flex-1 min-w-0 flex flex-col justify-center">
-          <h3 className="font-bold text-white text-lg leading-tight mb-2 line-clamp-2">
-            {showtimeInfo.movieTitle || "Đang chọn phim..."}
-          </h3>
-          <div className="flex flex-wrap gap-2 text-[10px] uppercase font-bold text-white/60 mb-2">
-            <span className="px-1.5 py-0.5 bg-white/10 rounded border border-white/5">
-              {showtimeInfo.format || "2D"}
-            </span>
-            <span className="px-1.5 py-0.5 bg-primary/20 text-primary rounded border border-primary/20">
-              {showtimeInfo.ageRating || "T18"}
+
+        <div className="space-y-3">
+          <div className="flex justify-between text-sm">
+            <span className="text-white/40">Rạp</span>
+            <span className="text-white font-medium text-right truncate ml-4">
+              {showtimeInfo.cinemaName}
             </span>
           </div>
-          <p className="text-white/90 text-sm font-medium truncate">
-            {showtimeInfo.cinemaName}
-          </p>
-          <p className="text-white/50 text-xs mt-0.5 truncate">
-            {showtimeInfo.roomName} •{" "}
-            {showtimeInfo.startTime
-              ? formatTimeHM(showtimeInfo.startTime)
-              : "--:--"}
-          </p>
+          <div className="flex justify-between text-sm">
+            <span className="text-white/40">Suất chiếu</span>
+            <span className="text-white font-medium text-right">
+              {showtimeInfo.startTime
+                ? formatTimeHM(showtimeInfo.startTime)
+                : "--:--"}
+            </span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-white/40">Phòng chiếu</span>
+            <span className="text-white font-medium text-right">
+              {showtimeInfo.roomName}
+            </span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-white/40">Ghế</span>
+            <div className="flex flex-wrap justify-end gap-1 max-w-[50%]">
+              {selectedSeats.length > 0 ? (
+                selectedSeats.map((s) => (
+                  <span key={s.id} className="text-primary font-bold">
+                    {seatLabel(s)},
+                  </span>
+                ))
+              ) : (
+                <span className="text-white/30 italic">Chưa chọn</span>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* 2. Scrollable Content */}
-      <div className="flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar bg-background-dark/30">
-        {/* Seats */}
-        <div className="space-y-3">
-          <div className="flex justify-between items-center border-b border-white/5 pb-2">
-            <h4 className="text-primary font-bold text-sm flex items-center gap-2">
-              <MdChair /> Ghế đã chọn
-            </h4>
-            <span className="font-bold text-white text-sm">
-              {formatCurrency(seatTotal)}
-            </span>
-          </div>
-
-          {selectedSeats.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {selectedSeats.map((seat) => (
-                <span
-                  key={seat.id}
-                  className="px-2 py-1 rounded bg-primary/10 border border-primary/30 text-primary text-xs font-bold"
-                >
-                  {seatLabel(seat)}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <p className="text-white/30 text-xs italic">
-              Vui lòng chọn ghế trên bản đồ.
-            </p>
-          )}
-        </div>
-
-        {/* Foods */}
-        <div className="space-y-3">
-          <div className="flex justify-between items-center border-b border-white/5 pb-2">
-            <h4 className="text-orange-400 font-bold text-sm flex items-center gap-2">
-              <MdFastfood /> Bắp nước
-            </h4>
-            <span className="font-bold text-white text-sm">
-              {formatCurrency(foodTotal)}
-            </span>
-          </div>
-
+      {/* 2. Scrollable Body (Đồ ăn + Voucher) */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-background-dark/20">
+        {/* Food Section */}
+        <div>
+          <h4 className="font-bold text-white text-sm uppercase tracking-wide mb-4 flex items-center gap-2">
+            <MdLunchDining className="text-base text-primary" /> Đồ ăn
+          </h4>
           {Object.values(selectedFoods).some((q) => q > 0) ? (
             <div className="space-y-2">
               {Object.keys(selectedFoods).map(renderFoodItem)}
@@ -164,65 +159,93 @@ const BookingSummary = ({
           )}
         </div>
 
-        {/* Voucher */}
-        <div className="space-y-3">
-          <h4 className="text-white font-bold text-sm flex items-center gap-2 border-b border-white/5 pb-2">
-            <MdLocalOffer className="text-gray-400" /> Ưu đãi
+        {/* Divider */}
+        <div className="border-t border-white/10 border-dashed" />
+
+        {/* Voucher Section - CUSTOM DROPDOWN */}
+        <div>
+          <h4 className="font-bold text-white text-sm uppercase tracking-wide mb-4 flex items-center gap-2">
+            <MdLocalOffer className="text-base text-primary" /> Mã giảm giá
           </h4>
 
-          <div className="space-y-2">
-            <div
-              className="relative"
-              tabIndex={0}
-              onBlur={() => setTimeout(() => setDropdownOpen(false), 80)}
-            >
+          <div className="space-y-3">
+            {/* Custom Dropdown Container */}
+            <div className="relative" ref={dropdownRef}>
+              {/* Trigger Button */}
               <button
                 type="button"
-                onClick={toggleDropdown}
+                onClick={() => {
+                  if (!appliedVoucher) {
+                    setIsOpen(!isOpen);
+                    if (!isOpen && onRefreshVouchers) onRefreshVouchers();
+                  }
+                }}
                 disabled={!!appliedVoucher}
-                className={`w-full flex items-center justify-between bg-surface-dark border border-white/10 text-white text-xs rounded-lg px-3 py-2.5 focus:border-primary focus:ring-1 focus:ring-primary transition-all disabled:opacity-50 ${
-                  dropdownOpen ? "ring-1 ring-primary border-primary/60" : ""
-                }`}
+                className={`w-full bg-white/5 border border-white/10 text-white text-xs rounded-lg px-3 py-3 flex items-center justify-between transition-all ${
+                  !appliedVoucher
+                    ? "hover:bg-white/10 cursor-pointer"
+                    : "opacity-50 cursor-not-allowed"
+                } ${isOpen ? "ring-1 ring-primary border-primary" : ""}`}
               >
-                <span className="truncate text-left">
+                <span className={voucherCode ? "text-white" : "text-white/40"}>
                   {voucherCode || "Chọn mã giảm giá..."}
                 </span>
-                <span className="text-white/40 text-[10px]">▼</span>
+                <MdKeyboardArrowDown
+                  className={`text-lg text-white/40 transition-transform ${
+                    isOpen ? "rotate-180" : ""
+                  }`}
+                />
               </button>
 
-              {dropdownOpen && (
-                <div className="absolute z-20 mt-2 w-full max-h-56 overflow-y-auto rounded-lg border border-white/10 bg-surface-dark shadow-xl shadow-black/50 custom-scrollbar">
+              {/* Dropdown Menu List */}
+              {isOpen && (
+                <div className="absolute top-full left-0 right-0 mt-2 z-50 bg-[#1e1e1e] border border-white/10 rounded-xl shadow-2xl overflow-hidden animate-fade-in-up ring-1 ring-white/5 max-h-60 overflow-y-auto custom-scrollbar">
+                  <button
+                    type="button"
+                    onMouseDown={() => handleSelectVoucher(null)}
+                    className="w-full text-left px-4 py-3 text-xs text-white hover:bg-white/10 border-b border-white/5"
+                  >
+                    Không dùng mã giảm giá
+                  </button>
                   {vouchers.length === 0 ? (
-                    <div className="px-3 py-3 text-xs text-white/50">
-                      Không có mã khả dụng.
+                    <div className="p-4 text-center text-white/30 text-xs">
+                      Không có mã giảm giá nào khả dụng.
                     </div>
                   ) : (
                     vouchers.map((v) => (
-                      <button
+                      <div
                         key={v.id}
-                        type="button"
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          handlePickVoucher(v.code);
-                        }}
-                        className="w-full text-left px-3 py-2 text-xs text-white hover:bg-primary/15 border-b border-white/5 last:border-b-0"
+                        onMouseDown={() => handleSelectVoucher(v.code)}
+                        className="px-4 py-3 border-b border-white/5 hover:bg-white/10 cursor-pointer transition-colors group"
                       >
-                        <span className="font-semibold">{v.code}</span>
-                        <span className="ml-2 text-white/60">
-                          {v.description || "Giảm giá vé"}
-                        </span>
-                      </button>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-bold text-primary text-sm group-hover:text-white transition-colors">
+                            {v.code}
+                          </span>
+                          <span className="text-[11px] text-white/60">
+                            {v.discount_percent
+                              ? `${v.discount_percent}%`
+                              : v.discount_amount
+                              ? `-${formatCurrency(v.discount_amount)}`
+                              : ""}
+                          </span>
+                        </div>
+                        <p className="text-white/60 text-xs line-clamp-1">
+                          {v.description || "Giảm giá vé xem phim"}
+                        </p>
+                      </div>
                     ))
                   )}
                 </div>
               )}
             </div>
 
+            {/* Input Manual & Action Button */}
             <div className="flex gap-2">
               <input
                 value={voucherCode}
                 onChange={(e) => setVoucherCode(e.target.value.toUpperCase())}
-                placeholder="Nhập mã..."
+                placeholder="Hoặc nhập mã..."
                 disabled={!!appliedVoucher}
                 className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:border-primary focus:ring-1 outline-none uppercase placeholder:normal-case transition-all disabled:opacity-50"
               />
@@ -232,27 +255,20 @@ const BookingSummary = ({
                     onApplyVoucher(null);
                     setVoucherCode("");
                   }}
-                  className="px-3 bg-red-500/10 text-red-400 border border-red-500/30 rounded-lg hover:bg-red-500/20 transition-colors flex items-center justify-center"
+                  className="px-3 bg-red-500/10 text-red-400 border border-red-500/30 rounded-lg hover:bg-red-500/20 transition-colors flex items-center justify-center gap-1"
                 >
-                  <MdCancel className="text-lg" />
+                  <MdCancel /> Hủy
                 </button>
               ) : (
                 <button
                   disabled={applying || !voucherCode}
                   onClick={() => onApplyVoucher(voucherCode)}
-                  className="px-4 py-2 bg-white/10 text-white hover:bg-white/20 rounded-lg text-xs font-bold transition-colors disabled:opacity-50 uppercase"
+                  className="px-4 bg-white/10 text-white hover:bg-white/20 rounded-lg text-xs font-bold transition-colors disabled:opacity-50 uppercase min-w-[80px]"
                 >
                   {applying ? "..." : "Áp dụng"}
                 </button>
               )}
             </div>
-
-            {(!vouchers || vouchers.length === 0) && (
-              <p className="text-[11px] text-white/40">
-                Không có mã khả dụng. Hãy đăng nhập và bấm vào hộp chọn để tải
-                lại.
-              </p>
-            )}
 
             {appliedVoucher && (
               <div className="p-2.5 bg-green-500/10 border border-green-500/20 rounded-lg flex justify-between items-center animate-fade-in-up">
@@ -268,13 +284,32 @@ const BookingSummary = ({
         </div>
       </div>
 
-      {/* 3. Footer Total */}
-      <div className="p-5 bg-surface-dark border-t border-white/10 space-y-4 shrink-0 z-10 relative">
-        <div className="flex justify-between items-end">
-          <span className="text-white/60 text-sm font-medium">
-            Tổng thanh toán
-          </span>
-          <span className="text-2xl font-black text-primary tracking-tight">
+      {/* 3. Footer Total & Button (Sticky) */}
+      <div className="p-6 bg-surface-dark border-t border-white/10 space-y-3 z-10 relative">
+        <div className="space-y-2 mb-2">
+          <div className="flex justify-between text-sm">
+            <span className="text-white/50">Tổng tiền ghế</span>
+            <span className="text-white font-medium">
+              {formatCurrency(seatTotal)}
+            </span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-white/50">Combo</span>
+            <span className="text-white font-medium">
+              {formatCurrency(foodTotal)}
+            </span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-white/50">Giảm giá</span>
+            <span className="text-green-500 font-medium">
+              -{formatCurrency(discount)}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-end pt-2 border-t border-white/10">
+          <span className="text-white font-bold">Tổng thanh toán</span>
+          <span className="text-2xl font-bold text-primary">
             {formatCurrency(finalTotal)}
           </span>
         </div>
@@ -282,12 +317,16 @@ const BookingSummary = ({
         <button
           onClick={onCheckout}
           disabled={checkoutLoading || selectedSeats.length === 0}
-          className="w-full py-3.5 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30 hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none transition-all active:scale-95 flex items-center justify-center gap-2"
+          className="w-full py-4 bg-primary hover:bg-primary/90 text-white font-bold text-lg rounded-xl shadow-lg shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform active:scale-95 flex items-center justify-center gap-2 group"
         >
-          {checkoutLoading && (
-            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          {checkoutLoading ? (
+            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          ) : (
+            <>
+              Tiếp tục
+              <MdChevronRight className="group-hover:translate-x-1 transition-transform" />
+            </>
           )}
-          Thanh toán ngay
         </button>
       </div>
     </aside>
