@@ -283,3 +283,16 @@ export const formatSeats = (tickets = []) => {
     .filter(Boolean)
     .join(", ");
 };
+
+/**
+ * hàm này sẽ lấy token từ localStorage, truyền vào trước khi chạy các hàm CRUD admin.
+ * @param {RequestInfo} input
+ * @param {RequestInit} init
+ * @returns {Promise<Response>}
+ */
+export const authenticatedFetch = (input, init = {}) => {
+  const token = localStorage.getItem("accessToken");
+  const headers = new Headers(init.headers || {});
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+  return fetch(input, { ...init, headers });
+};

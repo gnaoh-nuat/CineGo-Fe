@@ -45,11 +45,11 @@ const SummaryApi = {
     method: "post",
   },
   updateMovie: {
-    url: `${BASE_URL}/movies`, // Sẽ dùng url + '/' + id
+    url: `${BASE_URL}/movies`,
     method: "put",
   },
   deleteMovie: {
-    url: `${BASE_URL}/movies`, // Sẽ dùng url + '/' + id
+    url: `${BASE_URL}/movies`,
     method: "delete",
   },
 

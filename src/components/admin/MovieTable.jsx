@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function MovieTable({ movies, loading, pagination, fetchMovies, getStatusInfo }) {
+export default function MovieTable({ movies, loading, pagination, fetchMovies, getStatusInfo, onEdit, onDelete }) {
   return (
     <div className="rounded-3xl bg-surface-dark border border-white/5 overflow-hidden">
       <div className="overflow-x-auto">
@@ -47,8 +47,25 @@ export default function MovieTable({ movies, loading, pagination, fetchMovies, g
                       {status.label}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    {/* Actions (edit/delete) can go here */}
+                  
+                  {/* Phần Icon Sửa và Xóa theo yêu cầu của bạn */}
+                  <td className="px-6 py-4 whitespace-nowrap text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <button 
+                        onClick={() => onEdit(movie)}
+                        className="h-8 w-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-colors" 
+                        title="Chỉnh sửa"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">edit</span>
+                      </button>
+                      <button 
+                        onClick={() => onDelete(movie.id, movie.title)}
+                        className="h-8 w-8 rounded-full bg-white/5 hover:bg-red-500/20 flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors" 
+                        title="Xóa"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">delete</span>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               );

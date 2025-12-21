@@ -1,13 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import StatCard from '@/components/admin/StatCard';
 import MovieTable from '@/components/admin/MovieTable';
+import MovieFormModal from '@/components/admin/MovieFormModal';
+import prepareDataToSubmit from '@/components/admin/prepareDataToSubmit';
 import { getStatusInfo, sortMoviesByStatus, paginate } from '@/components/admin/movieHelpers';
 import SummaryApi from '@/common';
+import { authenticatedFetch } from '@/utils/helper';
 
 const MovieManagement = () => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
+
+  const [selectedMovie, setSelectedMovie] = useState(null); // Lưu thông tin phim đang sửa
+
   // State lưu trữ thống kê
   const [stats, setStats] = useState({
     total: 0,
@@ -30,7 +39,7 @@ const MovieManagement = () => {
         ? `${SummaryApi.getMovies.url}?status=${status}&size=1` 
         : `${SummaryApi.getMovies.url}?size=1`;
       
-      const response = await fetch(url);
+      const response = await authenticatedFetch(url);
       const dataResponse = await response.json();
       return dataResponse.success ? dataResponse.data.totalItems : 0;
     } catch (error) {
@@ -64,7 +73,7 @@ const MovieManagement = () => {
     try {
       if (GLOBAL_PRIORITY_SORT) {
         // Fetch first page to learn totalPages and size
-        const firstResp = await fetch(`${SummaryApi.getMovies.url}?page=1&size=${pagination.size}`);
+        const firstResp = await authenticatedFetch(`${SummaryApi.getMovies.url}?page=1&size=${pagination.size}`);
         const firstData = await firstResp.json();
         if (!firstData.success) {
           setMovies([]);
@@ -77,7 +86,7 @@ const MovieManagement = () => {
           // Too many pages to aggregate safely; fall back to server-side pagination
           console.warn(`Too many pages (${totalPagesFromApi}) to aggregate client-side. Falling back to server pagination.`);
           // Fetch requested page from server
-          const resp = await fetch(`${SummaryApi.getMovies.url}?page=${page}&size=${pagination.size}`);
+          const resp = await authenticatedFetch(`${SummaryApi.getMovies.url}?page=${page}&size=${pagination.size}`);
           const data = await resp.json();
           if (data.success) {
             setMovies(sortMoviesByStatus(data.data.items));
@@ -94,7 +103,7 @@ const MovieManagement = () => {
         // Aggregate all pages
         let allItems = [...firstData.data.items];
         for (let p = 2; p <= totalPagesFromApi; p++) {
-          const resp = await fetch(`${SummaryApi.getMovies.url}?page=${p}&size=${pagination.size}`);
+          const resp = await authenticatedFetch(`${SummaryApi.getMovies.url}?page=${p}&size=${pagination.size}`);
           const data = await resp.json();
           if (data.success) allItems.push(...data.data.items);
         }
@@ -106,7 +115,7 @@ const MovieManagement = () => {
         setPagination({ page: pageData.page, size: pageData.size, totalPages: pageData.totalPages, totalItems: pageData.totalItems });
       } else {
         // Server-side pagination (previous behavior)
-        const response = await fetch(`${SummaryApi.getMovies.url}?page=${page}&size=${pagination.size}`);
+        const response = await authenticatedFetch(`${SummaryApi.getMovies.url}?page=${page}&size=${pagination.size}`);
         const dataResponse = await response.json();
         if (dataResponse.success) {
           setMovies(sortMoviesByStatus(dataResponse.data.items));
@@ -125,51 +134,152 @@ const MovieManagement = () => {
     }
   };
 
+  // Mở modal để thêm mới
+  const handleAddNew = () => {
+    setSelectedMovie(null); // Reset dữ liệu cũ
+    setIsModalOpen(true);
+  };
+
+  // Mở modal để sửa
+  const handleEdit = (movie) => {
+    setSelectedMovie(movie); // Truyền dữ liệu phim được chọn
+    setIsModalOpen(true);
+  };
+
+  const handleSaveMovie = async (rawFormData) => {
+  const dataToSubmit = prepareDataToSubmit(rawFormData); // chuẩn hóa dữ liệu trước khi gửi
+
+  try {
+    const isEdit = !!selectedMovie; // Nếu có selectedMovie thì là sửa, ngược lại là thêm
+    // 1. Cấu hình Request dựa trên chế độ
+    const url = isEdit 
+      ? `${SummaryApi.updateMovie.url}/${selectedMovie.id}` 
+      : SummaryApi.createMovie.url;
+    
+    const method = isEdit ? "PUT" : "POST";
+
+    // 2. Gọi API
+    const response = await authenticatedFetch(url, {
+      method: isEdit ? "PUT" : "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataToSubmit), // Gửi dữ liệu đã được làm sạch
+    });
+
+    const result = await response.json();
+
+    // 3. Xử lý các mã phản hồi (Status Codes)
+    if (response.status === 201 || response.status === 200) {
+      alert(isEdit ? "Cập nhật phim thành công!" : "Thêm phim mới thành công!");
+      setIsModalOpen(false);
+      fetchMovies(pagination.page); // Tải lại danh sách phim
+      fetchAllStats(); // Cập nhật lại StatCard
+    } 
+    else if (response.status === 400) {
+      alert("Lỗi: Thiếu các trường dữ liệu bắt buộc!");
+    }
+    else if (response.status === 409) {
+      alert("Lỗi: Tên phim này đã tồn tại trong hệ thống!");
+    }
+    else if (response.status === 404) {
+      alert("Lỗi: Không tìm thấy Đạo diễn, Diễn viên hoặc Thể loại tương ứng!");
+    }
+    else {
+      alert("Có lỗi xảy ra: " + result.message);
+    }
+  } catch (error) {
+    console.error("Lỗi kết nối API:", error);
+    alert("Không thể kết nối tới server!");
+  }
+};
+
+  const handleDelete = async (id, title) => {
+    // 1. Hiển thị hộp thoại xác nhận với tên phim cụ thể
+    const confirmDelete = window.confirm(`Bạn có chắc chắn muốn xóa phim "${title}"? Hành động này không thể hoàn tác.`);
+    
+    if (!confirmDelete) return;
+
+    try {
+      // 2. Gọi API DELETE
+      const response = await authenticatedFetch(`${SummaryApi.deleteMovie.url}/${id}`, {
+        method: SummaryApi.deleteMovie.method.toUpperCase(),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const result = await response.json();
+
+      // 3. Xử lý phản hồi từ server
+      if (response.status === 200 || result.success) {
+        alert("Đã xóa phim thành công!");
+        
+        // 4. Cập nhật lại UI: Tải lại danh sách và số liệu thống kê
+        fetchMovies(pagination.page); 
+        fetchAllStats(); 
+      } 
+      else if (response.status === 404) {
+        alert("Lỗi: Phim không tồn tại hoặc đã bị xóa trước đó.");
+      } 
+      else {
+        alert("Xóa thất bại: " + (result.message || "Lỗi hệ thống"));
+      }
+    } catch (error) {
+      console.error("Lỗi khi thực hiện xóa phim:", error);
+      alert("Không thể kết nối đến máy chủ để thực hiện lệnh xóa.");
+    }
+  };
+
 
   useEffect(() => {
     fetchMovies();
     fetchAllStats(); // Gọi thống kê khi vào trang
   }, []);
 
-  // 2. Helper format trạng thái (extracted to src/components/admin/movieHelpers.js)
-
   return (
     <div className="mx-auto max-w-[96rem] space-y-8">
-      {/* Header & Stats - Giữ nguyên giao diện cũ */}
+      {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-3xl font-black text-white">Danh sách Phim</h2>
-        <button className="flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 font-bold text-white">
-          <span className="material-symbols-outlined">add</span> Thêm phim mới
+
+        {/* Button Thêm phim mới */}
+        <button 
+        onClick={handleAddNew}
+        className="flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 font-bold text-white"
+        >
+          <span className="material-symbols-outlined">add</span>
+          Thêm phim mới
         </button>
       </div>
 
       {/* Stats Grid */}
-<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-  <StatCard 
-    title="Tổng số phim" 
-    value={stats.total} 
-    icon="movie" 
-    color="primary" 
-  />
-  <StatCard 
-    title="Đang chiếu" 
-    value={stats.nowPlaying} 
-    icon="play_circle" 
-    color="success" 
-  />
-  <StatCard 
-    title="Sắp chiếu" 
-    value={stats.comingSoon} 
-    icon="schedule" 
-    color="warning" 
-  />
-  <StatCard 
-    title="Ngừng chiếu" 
-    value={stats.stopped} 
-    icon="stop_circle" 
-    color="gray" 
-  />
-</div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard 
+          title="Tổng số phim" 
+          value={stats.total} 
+          icon="movie" 
+          color="primary" 
+        />
+        <StatCard 
+          title="Đang chiếu" 
+          value={stats.nowPlaying} 
+          icon="play_circle" 
+          color="success" 
+        />
+        <StatCard 
+          title="Sắp chiếu" 
+          value={stats.comingSoon} 
+          icon="schedule" 
+          color="warning" 
+        />
+        <StatCard 
+          title="Ngừng chiếu" 
+          value={stats.stopped} 
+          icon="stop_circle" 
+          color="gray" 
+        />
+      </div>
 
       {/* Bảng dữ liệu */}
       <MovieTable
@@ -178,6 +288,16 @@ const MovieManagement = () => {
         pagination={pagination}
         fetchMovies={fetchMovies}
         getStatusInfo={getStatusInfo}
+
+        onEdit={handleEdit}     // Truyền hàm sửa
+        onDelete={handleDelete} // Truyền hàm xóa
+      />
+
+      <MovieFormModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onSave={handleSaveMovie}
+        editData={selectedMovie} // Truyền dữ liệu vào modal 
       />
     </div>
   );
