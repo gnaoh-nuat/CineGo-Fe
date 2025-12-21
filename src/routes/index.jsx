@@ -11,6 +11,8 @@ import About from "../pages/About";
 import MovieDetail from "../pages/MovieDetail";
 import MovieSearch from "../pages/MovieSearch";
 import MyTickets from "../pages/MyTickets";
+import Booking from "../pages/Booking";
+import SeatSelection from "../pages/SeatSelection";
 
 import Dashboard from "../pages/admin/Dashboard";
 import MovieManagement from "../pages/admin/MovieManagement";
@@ -32,12 +34,13 @@ const router = createBrowserRouter([
           { path: "movies", element: <MovieSearch /> },
           { path: "my-tickets", element: <MyTickets /> },
           { path: "movie/:id", element: <MovieDetail /> },
+          { path: "booking/:id", element: <Booking /> },
+          { path: "seat/:id", element: <SeatSelection /> },
         ],
       },
       {
         path: "admin",
         element: <AdminLayout />,
-        children: [{ index: true, element: <Dashboard /> }],
         children: [
           { index: true, element: <Dashboard /> },
           { path: "movies", element: <MovieManagement /> },

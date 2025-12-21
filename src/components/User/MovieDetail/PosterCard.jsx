@@ -3,8 +3,7 @@ import { MdPlayArrow } from "react-icons/md"; // Import icon
 
 const PosterCard = ({ movie }) => {
   const posterUrl =
-    movie?.poster_urls?.[0] ||
-    "https://via.placeholder.com/300x450?text=No+Image";
+    movie?.poster_urls?.[0] || "https://placehold.co/300x450?text=No+Image";
 
   const handlePlayTrailer = () => {
     if (movie?.trailer_url) {

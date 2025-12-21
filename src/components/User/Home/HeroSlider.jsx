@@ -85,7 +85,7 @@ const HeroSlider = () => {
     );
   }
 
-  const PLACEHOLDER_IMG = "https://via.placeholder.com/300x450?text=No+Image";
+  const PLACEHOLDER_IMG = "https://placehold.co/300x450?text=No+Image";
 
   return (
     <section className="relative h-[600px] md:h-[700px] w-full overflow-hidden group bg-background-dark text-white">
@@ -151,7 +151,7 @@ const HeroSlider = () => {
 
                     <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-2">
                       <Link
-                        to={`/movie/${movie.id}`}
+                        to={`/booking/${movie.id}`}
                         className="flex items-center gap-2 px-8 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-transform transform hover:scale-105 shadow-lg shadow-primary/30"
                       >
                         <MdConfirmationNumber className="text-xl" />

@@ -126,7 +126,7 @@ export const getPrimaryPoster = (posterUrls) => {
     return posterUrls[0];
   }
   // Ảnh mặc định nếu không có poster
-  return "https://via.placeholder.com/300x450?text=No+Image";
+  return "https://placehold.co/300x450?text=No+Image";
 };
 
 /**
@@ -282,4 +282,76 @@ export const formatSeats = (tickets = []) => {
     })
     .filter(Boolean)
     .join(", ");
+};
+
+// Tạo mảng ngày liên tiếp để render thanh chọn ngày
+export const buildDateOptions = (days = 7, startDate = new Date()) => {
+  const options = [];
+  for (let i = 0; i < days; i++) {
+    const date = new Date(startDate);
+    date.setDate(startDate.getDate() + i);
+
+    const iso = date.toISOString().split("T")[0];
+    const formatter = new Intl.DateTimeFormat("vi-VN", {
+      weekday: "short",
+      day: "2-digit",
+      month: "2-digit",
+    });
+
+    const [{ value: weekday }, , { value: day }, , { value: month }] =
+      formatter.formatToParts(date);
+
+    options.push({
+      value: iso,
+      weekday,
+      day,
+      month,
+      isToday: i === 0,
+    });
+  }
+  return options;
+};
+
+// Trả về chuỗi giờ:phút (HH:mm)
+export const formatTimeHM = (dateString) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return "";
+  return new Intl.DateTimeFormat("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+};
+
+// Tính giờ kết thúc dựa trên thời lượng (phút)
+export const calcEndTime = (start, durationMinutes) => {
+  if (!start || !durationMinutes) return "";
+  const date = new Date(start);
+  if (Number.isNaN(date.getTime())) return "";
+  date.setMinutes(date.getMinutes() + Number(durationMinutes));
+  return formatTimeHM(date.toISOString());
+};
+
+// Gom ghế theo hàng, sắp xếp số ghế tăng dần
+export const groupSeatsByRow = (seats = []) => {
+  const grouped = seats.reduce((acc, seat) => {
+    const row = seat?.row || "?";
+    if (!acc[row]) acc[row] = [];
+    acc[row].push(seat);
+    return acc;
+  }, {});
+
+  return Object.entries(grouped)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([row, list]) => ({
+      row,
+      seats: list.sort((x, y) => Number(x.number) - Number(y.number)),
+    }));
+};
+
+// Tạo nhãn ghế (ví dụ A5)
+export const seatLabel = (seat) => {
+  if (!seat) return "";
+  return `${seat.row || ""}${seat.number ?? ""}`;
 };

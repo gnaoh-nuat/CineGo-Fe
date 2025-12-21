@@ -27,7 +27,7 @@ const CastList = ({ actors }) => {
           <div key={actor.id} className="group relative">
             <div className="aspect-[3/4] rounded-lg overflow-hidden bg-surface-dark border border-white/5 relative mb-3">
               <img
-                src={actor.image_url || "https://via.placeholder.com/150"}
+                src={actor.image_url || "https://placehold.co/150x150"}
                 alt={actor.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
