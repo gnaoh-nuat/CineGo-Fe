@@ -1,11 +1,22 @@
 import React, { useEffect } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ScrollToTop from "./utils/ScrollToTop";
 
 function App() {
   ScrollToTop();
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Redirect VNPAY return queries to dedicated handler
+  useEffect(() => {
+    const hasTxnRef = location.search.includes("vnp_TxnRef=");
+    if (hasTxnRef && location.pathname !== "/payment/return") {
+      navigate(`/payment/return${location.search}`, { replace: true });
+    }
+  }, [location.pathname, location.search, navigate]);
 
   return (
     <>

@@ -6,14 +6,18 @@ import {
 } from "../../../utils/helper";
 
 const LEGEND = [
-  { label: "Ghế trống", class: "border-white/30 bg-transparent" },
+  { label: "Ghế trống", class: "bg-transparent border-white/30 text-white/60" },
   {
     label: "Đang chọn",
-    class: "bg-primary border-primary shadow-[0_0_10px_rgba(234,42,51,0.6)]",
+    class:
+      "bg-primary border-primary shadow-[0_0_10px_rgba(234,42,51,0.6)] text-white",
   },
-  { label: "Đã bán", class: "bg-red-900/80 border-white/5 opacity-70" },
-  { label: "VIP", class: "border-purple-500 text-purple-400" },
-  { label: "Couple", class: "border-pink-500 text-pink-400 w-12" },
+  {
+    label: "Đã bán",
+    class: "bg-red-900/80 border-transparent text-white/20",
+  },
+  { label: "VIP", class: "bg-transparent border-purple-500 text-purple-400" },
+  { label: "Couple", class: "bg-transparent border-pink-500 text-pink-400" },
 ];
 
 const SeatMap = ({
@@ -25,10 +29,14 @@ const SeatMap = ({
   const groupedRows = useMemo(() => groupSeatsByRow(seats), [seats]);
 
   const renderSeat = (seat) => {
-    const isBooked = seat.status === "BOOKED";
+    const seatStatus = (seat.status || "").toUpperCase();
+    const seatType = (seat.type || "").toUpperCase();
+
+    const isBooked =
+      seatStatus !== "AVAILABLE" && seatStatus !== "EMPTY" && seatStatus !== "";
     const isSelected = selectedSeatIds.includes(seat.id);
-    const isCouple = seat.type === "COUPLE";
-    const isVip = seat.type === "VIP";
+    const isCouple = seatType === "COUPLE";
+    const isVip = seatType === "VIP";
 
     // Base styles
     let btnClass = `relative flex items-center justify-center rounded-t-lg transition-all duration-200 text-[10px] md:text-xs font-bold select-none `;
@@ -67,7 +75,7 @@ const SeatMap = ({
         className={btnClass}
         title={`${seatLabel(seat)} - ${formatCurrency(seat.price)}`}
       >
-        {!isBooked && seatLabel(seat)}
+        {seatLabel(seat)}
       </button>
     );
   };
@@ -90,7 +98,9 @@ const SeatMap = ({
       <div className="w-full flex flex-wrap justify-center gap-6 mb-12">
         {LEGEND.map((item) => (
           <div key={item.label} className="flex items-center gap-2">
-            <div className={`w-5 h-5 rounded ${item.class}`} />
+            <div
+              className={`h-6 w-10 rounded-t-lg border text-[10px] ${item.class}`}
+            />
             <span className="text-sm text-white/70">{item.label}</span>
           </div>
         ))}

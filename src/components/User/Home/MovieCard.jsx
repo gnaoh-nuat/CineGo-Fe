@@ -44,7 +44,7 @@ const MovieCard = ({ movie }) => {
             className="w-full py-2.5 bg-primary text-white text-sm font-bold rounded-lg shadow-lg hover:bg-primary/90 flex items-center justify-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
           >
             <MdConfirmationNumber className="text-lg" />
-            Chọn suất
+            Đặt vé
           </button>
         </div>
       </div>

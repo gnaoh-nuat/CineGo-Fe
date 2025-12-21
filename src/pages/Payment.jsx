@@ -29,16 +29,13 @@ const Payment = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Xử lý khi redirect từ VNPAY về
+  // Nếu quay lại Payment cùng query VNPAY, chuyển sang PaymentReturn để xử lý
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const txnRef = params.get("vnp_TxnRef");
-    const responseCode = params.get("vnp_ResponseCode");
-
-    if (txnRef && responseCode) {
-      verifyVnpayReturn(txnRef, responseCode);
+    if (params.get("vnp_TxnRef")) {
+      navigate("/payment/return" + window.location.search, { replace: true });
     }
-  }, []);
+  }, [navigate]);
 
   // Tính toán tiền
   const seatTotal = useMemo(
@@ -78,6 +75,21 @@ const Payment = () => {
   const subtotal = seatTotal + foodTotal;
   const finalTotal = Math.max(subtotal - voucherDiscount, 0);
 
+  const goToResult = (status, message, extra = {}) => {
+    navigate("/payment/result", {
+      replace: true,
+      state: {
+        status,
+        message,
+        showtimeId: showtimeIdParam,
+        movieId: showtimeInfo?.movieId || showtimeInfo?.movie_id,
+        seats: selectedSeats,
+        total: finalTotal,
+        ...extra,
+      },
+    });
+  };
+
   // Hàm xác thực VNPAY
   const verifyVnpayReturn = async (txnRef, responseCode) => {
     setVerifyingReturn(true);
@@ -93,13 +105,16 @@ const Payment = () => {
       const data = await res.json();
 
       if (data.success && responseCode === "00") {
-        toast.success("Thanh toán thành công");
-        navigate("/my-tickets"); // Chuyển hướng về trang vé
+        goToResult("success", "Thanh toán thành công", {
+          bookingCode: data?.data?.booking_code,
+        });
       } else {
-        toast.error(data.message || "Thanh toán thất bại");
+        goToResult("failed", data.message || "Thanh toán thất bại", {
+          bookingCode: data?.data?.booking_code,
+        });
       }
     } catch (error) {
-      toast.error("Không thể xác thực thanh toán");
+      goToResult("failed", "Không thể xác thực thanh toán");
     } finally {
       setVerifyingReturn(false);
     }
@@ -116,6 +131,15 @@ const Payment = () => {
 
   // Xử lý thanh toán (Tạo đơn hàng)
   const handlePay = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      toast.info("Vui lòng đăng nhập để thanh toán");
+      return navigate("/login", {
+        state: { redirect: location.pathname + location.search },
+        replace: true,
+      });
+    }
+
     if (!selectedSeats.length) {
       toast.warn("Vui lòng chọn ghế trước");
       if (showtimeIdParam) return navigate(`/seat/${showtimeIdParam}`);
@@ -128,12 +152,6 @@ const Payment = () => {
       showtimeInfo?.id || showtimeInfo?.showtime_id || showtimeIdParam;
     if (!showtimeId) {
       toast.error("Thiếu thông tin suất chiếu");
-      return;
-    }
-
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      toast.info("Vui lòng đăng nhập để thanh toán");
       return;
     }
 
@@ -157,17 +175,19 @@ const Payment = () => {
       const data = await res.json();
 
       if (data.success) {
-        toast.success("Tạo đơn thành công");
         if (data.data?.payment_url) {
           window.location.href = data.data.payment_url;
         } else if (data.data?.order_id) {
-          navigate("/my-tickets", { replace: true });
+          goToResult("success", "Đặt vé thành công", {
+            bookingCode: data.data?.booking_code,
+            orderId: data.data?.order_id,
+          });
         }
       } else {
-        toast.error(data.message || "Thanh toán thất bại");
+        goToResult("failed", data.message || "Thanh toán thất bại");
       }
     } catch (error) {
-      toast.error("Không thể tạo đơn");
+      goToResult("failed", "Không thể tạo đơn");
     } finally {
       setPaying(false);
     }

@@ -224,7 +224,13 @@ const SeatSelection = () => {
 
   const handleCheckout = async () => {
     const token = localStorage.getItem("accessToken");
-    if (!token) return toast.info("Vui lòng đăng nhập để thanh toán");
+    if (!token) {
+      toast.info("Vui lòng đăng nhập để tiếp tục đặt vé");
+      return navigate("/login", {
+        state: { redirect: location.pathname },
+        replace: true,
+      });
+    }
     if (selectedSeats.length === 0)
       return toast.warn("Vui lòng chọn ghế trước");
 
