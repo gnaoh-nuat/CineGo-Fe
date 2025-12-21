@@ -6,7 +6,7 @@ import BookingStepper from "../components/User/Booking/BookingStepper";
 import SeatMap from "../components/User/Booking/SeatMap";
 import ServiceList from "../components/User/Booking/ServiceList";
 import BookingSummary from "../components/User/Booking/BookingSummary";
-import { formatCurrency } from "../utils/helper";
+import { formatCurrency, toUpperSafe } from "../utils/helper";
 
 const SeatSelection = () => {
   const { id: showtimeId } = useParams();
@@ -163,7 +163,8 @@ const SeatSelection = () => {
 
   // --- Handlers ---
   const handleToggleSeat = useCallback((seat) => {
-    if (!seat || seat.status !== "AVAILABLE") return;
+    const status = toUpperSafe(seat?.status);
+    if (!seat || status !== "AVAILABLE") return;
     setSelectedSeatIds((prev) =>
       prev.includes(seat.id)
         ? prev.filter((id) => id !== seat.id)

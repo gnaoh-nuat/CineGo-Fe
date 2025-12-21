@@ -333,6 +333,9 @@ export const calcEndTime = (start, durationMinutes) => {
   return formatTimeHM(date.toISOString());
 };
 
+// Chuyển chuỗi sang uppercase an toàn
+export const toUpperSafe = (value) => (value || "").toUpperCase();
+
 // Gom ghế theo hàng, sắp xếp số ghế tăng dần
 export const groupSeatsByRow = (seats = []) => {
   const grouped = seats.reduce((acc, seat) => {

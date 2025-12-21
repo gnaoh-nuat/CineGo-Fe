@@ -3,6 +3,7 @@ import {
   groupSeatsByRow,
   seatLabel,
   formatCurrency,
+  toUpperSafe,
 } from "../../../utils/helper";
 
 const LEGEND = [
@@ -29,8 +30,8 @@ const SeatMap = ({
   const groupedRows = useMemo(() => groupSeatsByRow(seats), [seats]);
 
   const renderSeat = (seat) => {
-    const seatStatus = (seat.status || "").toUpperCase();
-    const seatType = (seat.type || "").toUpperCase();
+    const seatStatus = toUpperSafe(seat?.status);
+    const seatType = toUpperSafe(seat?.type);
 
     const isBooked =
       seatStatus !== "AVAILABLE" && seatStatus !== "EMPTY" && seatStatus !== "";
