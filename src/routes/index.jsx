@@ -23,6 +23,7 @@ import MovieManagement from "../pages/admin/MovieManagement";
 import PeopleManagement from "@/pages/admin/PeopleManagement";
 import GenreManagement from "@/pages/admin/GenreManagement";
 import UserManagement from "@/pages/admin/UserManagement";
+import VoucherManagement from "@/pages/admin/VoucherManagement";
 
 const router = createBrowserRouter([
   {
@@ -60,7 +61,7 @@ const router = createBrowserRouter([
           { path: "theaters", element: <div>Quản lý Rạp</div> },
           { path: "showtimes", element: <div>Quản lý Lịch chiếu</div> },
           { path: "foods", element: <div>Quản lý Đồ ăn</div> },
-          { path: "vouchers", element: <div>Quản lý Voucher</div> },
+          { path: "vouchers", element: <VoucherManagement /> },
           { path: "checkin", element: <div>Check-in vé</div> },
           { path: "orders", element: <div>Quản lý Đơn hàng</div> },
           { path: "users", element: <UserManagement /> },

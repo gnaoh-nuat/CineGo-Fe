@@ -228,6 +228,22 @@ const SummaryApi = {
   },
 
   // Voucher APIs
+  getVouchers: {
+    url: `${BASE_URL}/vouchers`,
+    method: "get",
+  },
+  createVoucher: {
+    url: `${BASE_URL}/vouchers`,
+    method: "post",
+  },
+  updateVoucher: {
+    url: `${BASE_URL}/vouchers`,
+    method: "put",
+  },
+  deleteVoucher: {
+    url: `${BASE_URL}/vouchers`,
+    method: "delete",
+  },
   getMyVouchers: {
     url: `${BASE_URL}/vouchers/my-vouchers`,
     method: "get",
