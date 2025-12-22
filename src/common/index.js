@@ -62,6 +62,12 @@ const SummaryApi = {
     method: "get",
   },
 
+  // Dashboard Stats (external service)
+  getDashboardStats: {
+    url: 'https://anjava.io.vn/v1/stats/dashboard',
+    method: "get",
+  },
+
   // CRUD People - admin
   getPeoples: {
     url: `${BASE_URL}/peoples`,

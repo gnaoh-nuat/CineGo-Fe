@@ -56,7 +56,13 @@ const router = createBrowserRouter([
           { path: "movies", element: <MovieManagement /> },
           { path: "genres", element: <GenreManagement /> },
           { path: "people", element: <PeopleManagement /> },
-          { path: "artists", element: <Navigate to="/admin/people" replace /> } // redirect old path to new one
+          { path: "theaters", element: <div>Quản lý Rạp</div> },
+          { path: "showtimes", element: <div>Quản lý Lịch chiếu</div> },
+          { path: "foods", element: <div>Quản lý Đồ ăn</div> },
+          { path: "vouchers", element: <div>Quản lý Voucher</div> },
+          { path: "checkin", element: <div>Check-in vé</div> },
+          { path: "orders", element: <div>Quản lý Đơn hàng</div> },
+          { path: "users", element: <div>Quản lý Người dùng</div> },
         ],
       },
       {
