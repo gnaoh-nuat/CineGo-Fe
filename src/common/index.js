@@ -99,6 +99,18 @@ const SummaryApi = {
     url: `${BASE_URL}/users/avatar`,
     method: "put",
   },
+  getUsers: {
+    url: `${BASE_URL}/users`,
+    method: "get",
+  },
+  createUser: {
+    url: `${BASE_URL}/users`,
+    method: "post",
+  },
+  deleteUser: {
+    url: `${BASE_URL}/users`,
+    method: "delete",
+  },
 
   // Genre APIs
   getGenres: {
@@ -216,6 +228,22 @@ const SummaryApi = {
   },
 
   // Voucher APIs
+  getVouchers: {
+    url: `${BASE_URL}/vouchers`,
+    method: "get",
+  },
+  createVoucher: {
+    url: `${BASE_URL}/vouchers`,
+    method: "post",
+  },
+  updateVoucher: {
+    url: `${BASE_URL}/vouchers`,
+    method: "put",
+  },
+  deleteVoucher: {
+    url: `${BASE_URL}/vouchers`,
+    method: "delete",
+  },
   getMyVouchers: {
     url: `${BASE_URL}/vouchers/my-vouchers`,
     method: "get",
