@@ -174,6 +174,18 @@ const SummaryApi = {
     url: `${BASE_URL}/foods`, // query: page, size, search
     method: "get",
   },
+  createFood: {
+    url: `${BASE_URL}/foods`,
+    method: "post",
+  },
+  updateFood: {
+    url: `${BASE_URL}/foods`,
+    method: "put",
+  },
+  deleteFood: {
+    url: `${BASE_URL}/foods`,
+    method: "delete",
+  },
   getFoodDetail: {
     url: `${BASE_URL}/foods`, // + '/{id}'
     method: "get",
