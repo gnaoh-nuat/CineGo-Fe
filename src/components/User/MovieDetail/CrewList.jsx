@@ -14,7 +14,7 @@ const CrewList = ({ director }) => {
       <div className="bg-surface-dark/50 border border-white/5 rounded-xl p-5 flex items-center gap-6 hover:bg-surface-dark hover:border-white/10 transition-all group">
         <div className="size-20 lg:size-24 rounded-full overflow-hidden border-2 border-white/10 shrink-0 shadow-lg group-hover:border-primary group-hover:shadow-primary/20 transition-all">
           <img
-            src={director.image_url || "https://via.placeholder.com/150"}
+            src={director.image_url || "https://placehold.co/150x150"}
             alt={director.name}
             className="w-full h-full object-cover"
           />

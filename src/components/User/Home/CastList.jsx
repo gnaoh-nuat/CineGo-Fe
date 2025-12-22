@@ -99,9 +99,7 @@ const CastList = () => {
                   {/* Avatar Container */}
                   <div className="size-24 md:size-28 rounded-full bg-surface-dark border-2 border-white/10 overflow-hidden relative shadow-lg shadow-black/30 group-hover/item:border-primary transition-colors duration-300">
                     <img
-                      src={
-                        person.image_url || "https://via.placeholder.com/150"
-                      }
+                      src={person.image_url || "https://placehold.co/150x150"}
                       alt={person.name}
                       className="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-500"
                       loading="lazy"

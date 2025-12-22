@@ -153,7 +153,7 @@ const OrderDetail = ({ bookingCode, loading, data, onClose }) => {
                                 <img
                                   src={
                                     f.Food?.image_url ||
-                                    "https://via.placeholder.com/100?text=Food"
+                                    "https://placehold.co/100x100?text=Food"
                                   }
                                   alt={f.Food?.name}
                                   className="w-full h-full object-cover"

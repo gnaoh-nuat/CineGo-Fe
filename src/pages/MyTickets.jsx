@@ -53,7 +53,19 @@ const MyTickets = () => {
 
   const filteredOrders = useMemo(() => {
     if (status === "ALL") return orders;
-    return orders.filter((o) => (o.status || "").toUpperCase() === status);
+
+    return orders.filter((o) => {
+      const st = (o.status || "").toUpperCase();
+
+      if (status === "PROCESSING")
+        return ["PROCESSING", "PENDING"].includes(st);
+      if (status === "CANCELLED")
+        return ["CANCELLED", "CANCELED", "FAILED"].includes(st);
+      if (status === "SUCCESSFUL")
+        return ["SUCCESSFUL", "SUCCESS"].includes(st);
+
+      return st === status;
+    });
   }, [orders, status]);
 
   // 2. Handle QR: lấy trực tiếp qr_code_url từ đơn hàng (ưu tiên dữ liệu sẵn có, fallback gọi /orders/{id})

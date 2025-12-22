@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MdConfirmationNumber, MdStar, MdAccessTime } from "react-icons/md";
 import {
   formatDuration,
@@ -10,6 +10,8 @@ import {
 } from "../../../utils/helper";
 
 const MovieGrid = ({ movies = [], loading }) => {
+  const navigate = useNavigate();
+
   // Skeleton Loading
   if (loading) {
     return (
@@ -75,7 +77,15 @@ const MovieGrid = ({ movies = [], loading }) => {
 
               {/* Hover Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 z-20">
-                <button className="w-full py-2.5 bg-primary text-white text-sm font-bold rounded-lg shadow-lg hover:bg-primary/90 flex items-center justify-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate(`/booking/${movie.id}`);
+                  }}
+                  className="w-full py-2.5 bg-primary text-white text-sm font-bold rounded-lg shadow-lg hover:bg-primary/90 flex items-center justify-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+                >
                   <MdConfirmationNumber className="text-lg" />
                   Đặt vé
                 </button>

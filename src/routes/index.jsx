@@ -11,6 +11,12 @@ import About from "../pages/About";
 import MovieDetail from "../pages/MovieDetail";
 import MovieSearch from "../pages/MovieSearch";
 import MyTickets from "../pages/MyTickets";
+import Theaters from "../pages/Theaters";
+import Booking from "../pages/Booking";
+import SeatSelection from "../pages/SeatSelection";
+import Payment from "../pages/Payment";
+import PaymentResult from "../pages/PaymentResult";
+import PaymentReturn from "../pages/PaymentReturn";
 
 import Dashboard from "../pages/admin/Dashboard";
 import MovieManagement from "../pages/admin/MovieManagement";
@@ -31,9 +37,15 @@ const router = createBrowserRouter([
           { path: "forgot-password", element: <ForgotPassword /> },
           { path: "profile", element: <Profile /> },
           { path: "about", element: <About /> },
+          { path: "theaters", element: <Theaters /> },
           { path: "movies", element: <MovieSearch /> },
           { path: "my-tickets", element: <MyTickets /> },
           { path: "movie/:id", element: <MovieDetail /> },
+          { path: "booking/:id", element: <Booking /> },
+          { path: "seat/:id", element: <SeatSelection /> },
+          { path: "payment/:id", element: <Payment /> },
+          { path: "payment/return", element: <PaymentReturn /> },
+          { path: "payment/result", element: <PaymentResult /> },
         ],
       },
       {
