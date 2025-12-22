@@ -22,6 +22,7 @@ import Dashboard from "../pages/admin/Dashboard";
 import MovieManagement from "../pages/admin/MovieManagement";
 import PeopleManagement from "@/pages/admin/PeopleManagement";
 import GenreManagement from "@/pages/admin/GenreManagement";
+import UserManagement from "@/pages/admin/UserManagement";
 
 const router = createBrowserRouter([
   {
@@ -62,7 +63,7 @@ const router = createBrowserRouter([
           { path: "vouchers", element: <div>Quản lý Voucher</div> },
           { path: "checkin", element: <div>Check-in vé</div> },
           { path: "orders", element: <div>Quản lý Đơn hàng</div> },
-          { path: "users", element: <div>Quản lý Người dùng</div> },
+          { path: "users", element: <UserManagement /> },
         ],
       },
       {

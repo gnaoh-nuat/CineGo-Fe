@@ -83,7 +83,7 @@ const SummaryApi = {
   },
   updatePeoples: {
     url: `${BASE_URL}/peoples`,
-    method: "put",  
+    method: "put",
   },
   deletePeoples: {
     url: `${BASE_URL}/peoples`,
@@ -99,6 +99,18 @@ const SummaryApi = {
     url: `${BASE_URL}/users/avatar`,
     method: "put",
   },
+  getUsers: {
+    url: `${BASE_URL}/users`,
+    method: "get",
+  },
+  createUser: {
+    url: `${BASE_URL}/users`,
+    method: "post",
+  },
+  deleteUser: {
+    url: `${BASE_URL}/users`,
+    method: "delete",
+  },
 
   // Genre APIs
   getGenres: {
@@ -106,7 +118,7 @@ const SummaryApi = {
     method: "get",
   },
   getGenreDetail: {
-    url: `${BASE_URL}/genres`, 
+    url: `${BASE_URL}/genres`,
     method: "get",
   },
   // CRUD for admin
