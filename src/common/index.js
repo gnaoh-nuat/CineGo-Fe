@@ -91,6 +91,19 @@ const SummaryApi = {
     url: `${BASE_URL}/genres`, // Khi gọi API cần nối thêm ID: url + '/' + id
     method: "get",
   },
+  // CRUD for admin
+  createGenre: {
+    url: `${BASE_URL}/genres`,
+    method: "post",
+  },
+  updateGenre: {
+    url: `${BASE_URL}/genres`,
+    method: "put",
+  },
+  deleteGenre: {
+    url: `${BASE_URL}/genres`,
+    method: "delete",
+  },
 
   // Cinema APIs
   getCinemas: {

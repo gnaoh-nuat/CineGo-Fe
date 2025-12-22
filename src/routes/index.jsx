@@ -14,6 +14,8 @@ import MyTickets from "../pages/MyTickets";
 
 import Dashboard from "../pages/admin/Dashboard";
 import MovieManagement from "../pages/admin/MovieManagement";
+import ArtistManagement from "@/pages/admin/ArtistManagement";
+import GenreManagement from "@/pages/admin/GenreManagement";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +42,8 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <Dashboard /> },
           { path: "movies", element: <MovieManagement /> },
+          { path: "genres", element: <GenreManagement /> },
+          { path: "artists", element: <ArtistManagement /> },
         ],
       },
       {
