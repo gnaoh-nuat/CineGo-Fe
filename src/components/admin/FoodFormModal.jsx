@@ -55,22 +55,42 @@ const FoodFormModal = ({ isOpen, onClose, onSave, editData = null }) => {
                 body: formDataUpload,
             });
 
-            const result = await response.json();
+            const contentType = response.headers.get("content-type");
 
-            if (result.success) {
-                // Assuming the API returns something like: 
-                // { success: true, data: { url: "..." } } or just url in data
-                // Adjust based on your actual API response structure for file upload.
-                // Common pattern: result.data (url string) or result.data.url
-                // Based on previous contexts, let's assume result.data is the URL or contains it.
-                // If result.data is the string URL:
-                setFormData(prev => ({ ...prev, image_url: result.data || result.url }));
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                const result = await response.json();
+                if (result.success) {
+                    let uploadedUrl = "";
+                    if (Array.isArray(result.data) && result.data.length > 0) {
+                        uploadedUrl = result.data[0].url;
+                    } else if (typeof result.data === 'string') {
+                        uploadedUrl = result.data;
+                    } else if (result.data && result.data.url) {
+                        uploadedUrl = result.data.url;
+                    } else if (result.data && result.data.file_path) {
+                        uploadedUrl = result.data.file_path;
+                    } else if (result.url) {
+                        uploadedUrl = result.url;
+                    }
+
+                    if (uploadedUrl) {
+                        setFormData(prev => ({ ...prev, image_url: uploadedUrl }));
+                    } else {
+                        console.warn("Upload response:", result);
+                        setErrors({ ...errors, image_url: "Upload thành công nhưng không lấy được link ảnh." });
+                    }
+                } else {
+                    setErrors({ ...errors, image_url: result.message || "Upload thất bại" });
+                }
             } else {
-                setErrors({ ...errors, image_url: result.message || "Upload ảnh thất bại" });
+                // Handle non-JSON response (e.g. 401 text/plain)
+                const text = await response.text();
+                console.error("Upload non-JSON response:", text);
+                setErrors({ ...errors, image_url: "Lỗi upload: " + text });
             }
         } catch (error) {
             console.error("Upload error:", error);
-            setErrors({ ...errors, image_url: "Lỗi kết nối khi upload ảnh" });
+            setErrors({ ...errors, image_url: "Lỗi kết nối hoặc lỗi xử lý: " + error.message });
         } finally {
             setUploading(false);
         }
