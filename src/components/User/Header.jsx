@@ -43,6 +43,12 @@ const Header = () => {
     setImgError(false);
   }, [avatarUrl]);
 
+  // Debug: log user changes to help find unexpected empty objects
+  useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.debug('Header user state:', user);
+  }, [user]);
+
   const handleLogout = () => {
     logout();
     navigate("/");
@@ -253,7 +259,7 @@ const Header = () => {
             )}
           </div>
 
-          {user ? (
+          {user?.id ? (
             <div className="relative group h-20 flex items-center cursor-pointer">
               <div className="size-10 rounded-full p-0.5 border-2 border-transparent group-hover:border-primary transition-all overflow-hidden bg-surface-dark flex items-center justify-center shadow-lg">
                 {avatarUrl && !imgError ? (

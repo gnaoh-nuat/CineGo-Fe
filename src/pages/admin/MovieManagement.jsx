@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import StatCard from '@/components/admin/StatCard';
 import MovieTable from '@/components/admin/MovieTable';
+import AddNewButton from '@/components/admin/AddNewButton';
 import MovieFormModal from '@/components/admin/MovieFormModal';
+import SearchBar from '@/components/admin/SearchBar';
 import prepareDataToSubmit from '@/components/admin/prepareDataToSubmit';
 import { getStatusInfo, sortMoviesByStatus, paginate } from '@/components/admin/movieHelpers';
 import SummaryApi from '@/common';
@@ -68,10 +70,13 @@ const MovieManagement = () => {
   // Safety cap to avoid fetching an excessive number of pages
   const MAX_PAGES_TO_AGGREGATE = 50;
 
-  const fetchMovies = async (page = 1) => {
+  // Accept optional search parameter; when searching we prefer server-side pagination
+  const fetchMovies = async (page = 1, search = '') => {
     setLoading(true);
     try {
-      if (GLOBAL_PRIORITY_SORT) {
+      const useAggregate = GLOBAL_PRIORITY_SORT && !search; // only aggregate when not searching
+
+      if (useAggregate) {
         // Fetch first page to learn totalPages and size
         const firstResp = await authenticatedFetch(`${SummaryApi.getMovies.url}?page=1&size=${pagination.size}`);
         const firstData = await firstResp.json();
@@ -85,7 +90,7 @@ const MovieManagement = () => {
         if (totalPagesFromApi > MAX_PAGES_TO_AGGREGATE) {
           // Too many pages to aggregate safely; fall back to server-side pagination
           console.warn(`Too many pages (${totalPagesFromApi}) to aggregate client-side. Falling back to server pagination.`);
-          // Fetch requested page from server
+          // Fetch requested page from server (no search param here since useAggregate true)
           const resp = await authenticatedFetch(`${SummaryApi.getMovies.url}?page=${page}&size=${pagination.size}`);
           const data = await resp.json();
           if (data.success) {
@@ -114,8 +119,10 @@ const MovieManagement = () => {
         setMovies(pageData.items);
         setPagination({ page: pageData.page, size: pageData.size, totalPages: pageData.totalPages, totalItems: pageData.totalItems });
       } else {
-        // Server-side pagination (previous behavior)
-        const response = await authenticatedFetch(`${SummaryApi.getMovies.url}?page=${page}&size=${pagination.size}`);
+        // Server-side pagination (use search param if provided)
+        let url = `${SummaryApi.getMovies.url}?page=${page}&size=${pagination.size}`;
+        if (search) url += `&search=${encodeURIComponent(search)}`;
+        const response = await authenticatedFetch(url);
         const dataResponse = await response.json();
         if (dataResponse.success) {
           setMovies(sortMoviesByStatus(dataResponse.data.items));
@@ -232,10 +239,26 @@ const MovieManagement = () => {
   };
 
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const isFirstSearchRun = useRef(true);
+
   useEffect(() => {
-    fetchMovies();
+    fetchMovies(1, '');
     fetchAllStats(); // Gọi thống kê khi vào trang
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (isFirstSearchRun.current) {
+      isFirstSearchRun.current = false;
+      return;
+    }
+    const t = setTimeout(() => {
+      fetchMovies(1, searchQuery);
+      setPagination(prev => ({ ...prev, page: 1 }));
+    }, 400);
+    return () => clearTimeout(t);
+  }, [searchQuery]);
 
   return (
     <div className="mx-auto max-w-[96rem] space-y-8">
@@ -243,14 +266,16 @@ const MovieManagement = () => {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-3xl font-black text-white">Danh sách Phim</h2>
 
-        {/* Button Thêm phim mới */}
-        <button 
-        onClick={handleAddNew}
-        className="flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 font-bold text-white"
-        >
-          <span className="material-symbols-outlined">add</span>
-          Thêm phim mới
-        </button>
+        {/* Button Thêm phim mới + Search */}
+        <div className="flex items-center gap-2">
+          <SearchBar
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Tìm kiếm phim..."
+          />
+
+          <AddNewButton onClick={handleAddNew} label="Thêm phim mới" />
+        </div>
       </div>
 
       {/* Stats Grid */}
@@ -286,7 +311,7 @@ const MovieManagement = () => {
         movies={movies}
         loading={loading}
         pagination={pagination}
-        fetchMovies={fetchMovies}
+        fetchMovies={(page) => fetchMovies(page, searchQuery)}
         getStatusInfo={getStatusInfo}
 
         onEdit={handleEdit}     // Truyền hàm sửa

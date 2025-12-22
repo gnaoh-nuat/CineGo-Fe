@@ -9,7 +9,7 @@ export default function AdminHeader() {
         <h2 className="text-lg font-bold text-white">CineAdmin</h2>
       </div>
 
-      {/* Search */}
+      {/* Search
       <div className="hidden md:flex flex-1 max-w-lg">
         <div className="relative w-full">
           <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
@@ -21,10 +21,10 @@ export default function AdminHeader() {
             className="h-12 w-full rounded-full border-none bg-surface-dark pl-12 pr-4 text-sm text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:outline-none"
           />
         </div>
-      </div>
+      </div> */}
 
       {/* Right */}
-      <div className="flex items-center gap-4">
+      <div className="ml-auto flex items-center gap-4">
         <button className="relative flex h-10 w-10 items-center justify-center rounded-full bg-surface-dark text-white hover:bg-white/10 transition-colors">
           <span className="material-symbols-outlined">notifications</span>
           <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-primary ring-2 ring-background-dark"></span>

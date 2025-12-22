@@ -61,14 +61,14 @@ const AdminSidebar = () => {
             </NavLink>
 
             <NavLink
-              to="/admin/artists"
+              to="/admin/people"
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-xl pl-12 pr-4 py-2 text-sm transition-colors ${
                   isActive ? "text-primary font-bold bg-white/5" : "text-gray-400 hover:text-white hover:bg-white/5"
                 }`
               }
             >
-              <span className={`h-1.5 w-1.5 rounded-full transition-colors ${window.location.pathname === '/admin/actors' ? 'bg-primary' : 'bg-white/20'}`}></span>
+              <span className={`h-1.5 w-1.5 rounded-full transition-colors ${window.location.pathname === '/admin/people' ? 'bg-primary' : 'bg-white/20'}`}></span>
               Nghệ sĩ
             </NavLink>
           </div>

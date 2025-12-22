@@ -62,14 +62,26 @@ const SummaryApi = {
     method: "get",
   },
 
-  //People APIs
+  // CRUD People - admin
   getPeoples: {
     url: `${BASE_URL}/peoples`,
     method: "get",
   },
-  getPeopleDetail: {
+  getPeoplesDetail: {
     url: `${BASE_URL}/peoples`, // Khi gọi API cần nối thêm ID: url + '/' + id
     method: "get",
+  },
+  createPeoples: {
+    url: `${BASE_URL}/peoples`,
+    method: "post",
+  },
+  updatePeoples: {
+    url: `${BASE_URL}/peoples`,
+    method: "put",  
+  },
+  deletePeoples: {
+    url: `${BASE_URL}/peoples`,
+    method: "delete",
   },
 
   // User APIs
@@ -88,7 +100,7 @@ const SummaryApi = {
     method: "get",
   },
   getGenreDetail: {
-    url: `${BASE_URL}/genres`, // Khi gọi API cần nối thêm ID: url + '/' + id
+    url: `${BASE_URL}/genres`, 
     method: "get",
   },
   // CRUD for admin

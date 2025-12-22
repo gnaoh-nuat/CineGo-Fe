@@ -17,6 +17,12 @@ export default function MovieTable({
 
   const renderDefaultMovieRow = (movie) => {
     const status = getStatusInfo ? getStatusInfo(movie.status) : { color: 'success', label: 'Đang chiếu' };
+    const statusClasses = status.color === 'success'
+      ? 'bg-success/10 text-success border-success/20'
+      : status.color === 'warning'
+        ? 'bg-warning/10 text-warning border-warning/20'
+        : 'bg-transparent text-gray-400 border-transparent';
+
     return (
       <>
         <td className="px-6 py-4 text-center font-mono text-xs">{movie.id}</td>
@@ -37,9 +43,7 @@ export default function MovieTable({
         <td className="px-6 py-4">{movie.director?.name || "N/A"}</td>
         <td className="px-6 py-4">{new Date(movie.release_date).toLocaleDateString('vi-VN')}</td>
         <td className="px-6 py-4 text-center">
-          <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
-            status.color === 'success' ? 'bg-success/10 text-success border-success/20' : 'bg-warning/10 text-warning border-warning/20'
-          }`}>
+          <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${statusClasses}`}>
             {status.label}
           </span>
         </td>

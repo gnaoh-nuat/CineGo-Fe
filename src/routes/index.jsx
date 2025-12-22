@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import App from "../App";
 import MainLayout from "../layouts/MainLayout";
 import AdminLayout from "../layouts/AdminLayout";
@@ -14,7 +14,7 @@ import MyTickets from "../pages/MyTickets";
 
 import Dashboard from "../pages/admin/Dashboard";
 import MovieManagement from "../pages/admin/MovieManagement";
-import ArtistManagement from "@/pages/admin/ArtistManagement";
+import PeopleManagement from "@/pages/admin/PeopleManagement";
 import GenreManagement from "@/pages/admin/GenreManagement";
 
 const router = createBrowserRouter([
@@ -43,7 +43,8 @@ const router = createBrowserRouter([
           { index: true, element: <Dashboard /> },
           { path: "movies", element: <MovieManagement /> },
           { path: "genres", element: <GenreManagement /> },
-          { path: "artists", element: <ArtistManagement /> },
+          { path: "people", element: <PeopleManagement /> },
+          { path: "artists", element: <Navigate to="/admin/people" replace /> } // redirect old path to new one
         ],
       },
       {

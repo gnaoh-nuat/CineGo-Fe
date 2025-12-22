@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const ArtistFormModal = ({ isOpen, onClose, onSave, editData = null }) => {
+const PeopleFormModal = ({ isOpen, onClose, onSave, editData = null }) => {
   const [formData, setFormData] = useState({
     name: "",
     type: "ACTOR",
@@ -28,7 +28,7 @@ const ArtistFormModal = ({ isOpen, onClose, onSave, editData = null }) => {
   const isEditMode = !!editData;
 
   const handleSubmit = () => {
-    // Logic validate đơn giản tương tự MovieFormModal của bạn
+    // Simple validation similar to MovieFormModal
     const newErrors = {};
     if (!formData.name) newErrors.name = "Họ tên không được để trống";
     if (!formData.image_url) newErrors.image_url = "Vui lòng cung cấp link ảnh";
@@ -44,10 +44,10 @@ const ArtistFormModal = ({ isOpen, onClose, onSave, editData = null }) => {
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
       <div className="bg-surface-dark w-full max-w-lg rounded-3xl border border-white/10 overflow-hidden shadow-2xl animate-fade-in">
         
-        {/* Header - Tái sử dụng style của bạn */}
+        {/* Header */}
         <div className="p-6 border-b border-white/5 flex justify-between items-center">
           <h3 className="text-xl font-bold text-white">
-            {isEditMode ? `Chỉnh sửa nghệ sĩ: ${editData.name}` : "Thêm nghệ sĩ mới"}
+            {isEditMode ? `Chỉnh sửa người: ${editData.name}` : "Thêm người mới"}
           </h3>
           <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
             <span className="material-symbols-outlined">close</span>
@@ -58,7 +58,7 @@ const ArtistFormModal = ({ isOpen, onClose, onSave, editData = null }) => {
         <form className="p-6 space-y-4">
           <div className="space-y-4">
             
-            {/* Tên nghệ sĩ */}
+            {/* Name */}
             <div className="space-y-2">
               <label className="text-xs font-bold text-gray-400 uppercase">Họ và tên</label>
               <input
@@ -71,7 +71,7 @@ const ArtistFormModal = ({ isOpen, onClose, onSave, editData = null }) => {
               {errors.name && <p className="text-xs text-red-400 mt-1">{errors.name}</p>}
             </div>
 
-            {/* Loại nghệ sĩ */}
+            {/* Role */}
             <div className="space-y-2">
               <label className="text-xs font-bold text-gray-400 uppercase">Vai trò</label>
               <select
@@ -97,7 +97,7 @@ const ArtistFormModal = ({ isOpen, onClose, onSave, editData = null }) => {
               {errors.image_url && <p className="text-xs text-red-400 mt-1">{errors.image_url}</p>}
             </div>
 
-            {/* Tiểu sử */}
+            {/* Bio */}
             <div className="space-y-2">
               <label className="text-xs font-bold text-gray-400 uppercase">Tiểu sử</label>
               <textarea
@@ -105,14 +105,14 @@ const ArtistFormModal = ({ isOpen, onClose, onSave, editData = null }) => {
                 value={formData.bio}
                 className="w-full bg-background-dark border border-white/10 rounded-xl px-4 py-2.5 text-white focus:border-primary outline-none resize-none custom-scrollbar"
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                placeholder="Nhập tóm tắt về nghệ sĩ..."
+                placeholder="Nhập tóm tắt về người này..."
               />
             </div>
 
           </div>
         </form>
 
-        {/* Footer - Giữ nguyên style button của bạn */}
+        {/* Footer */}
         <div className="p-6 border-t border-white/5 flex justify-end gap-3">
           <button onClick={onClose} className="px-6 py-2.5 rounded-full border border-white/10 text-gray-400 font-bold hover:bg-white/5">
             Hủy
@@ -121,7 +121,7 @@ const ArtistFormModal = ({ isOpen, onClose, onSave, editData = null }) => {
             onClick={handleSubmit}
             className="px-6 py-2.5 rounded-full bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:bg-red-600 transition-all"
           >
-            {isEditMode ? "Lưu thay đổi" : "Lưu nghệ sĩ"}
+            {isEditMode ? "Lưu thay đổi" : "Lưu"}
           </button>
         </div>
       </div>
@@ -129,4 +129,4 @@ const ArtistFormModal = ({ isOpen, onClose, onSave, editData = null }) => {
   );
 };
 
-export default ArtistFormModal;
+export default PeopleFormModal;
