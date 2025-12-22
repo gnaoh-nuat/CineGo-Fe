@@ -1,4 +1,13 @@
+import { useAuth } from "../../context/AuthContext";
+
 export default function AdminHeader() {
+  const { user } = useAuth();
+
+  const displayName = user?.full_name || user?.email || "Admin";
+  const displayRole = user?.role || "Super Admin";
+  const avatarUrl = user?.avatar || user?.image_url;
+  const initials = (displayName || "A").charAt(0).toUpperCase();
+
   return (
     <header className="flex h-20 items-center justify-between border-b border-white/10 bg-background-dark/50 px-8 backdrop-blur-md">
       {/* Mobile left */}
@@ -23,25 +32,24 @@ export default function AdminHeader() {
         </div>
       </div> */}
 
-      {/* Right */}
+      {/* Right: account info */}
       <div className="ml-auto flex items-center gap-4">
-        <button className="relative flex h-10 w-10 items-center justify-center rounded-full bg-surface-dark text-white hover:bg-white/10 transition-colors">
-          <span className="material-symbols-outlined">notifications</span>
-          <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-primary ring-2 ring-background-dark"></span>
-        </button>
-
         <div className="flex items-center gap-3 pl-2">
           <div className="text-right hidden sm:block">
-            <p className="text-sm font-bold text-white">Admin Quản trị</p>
-            <p className="text-xs text-gray-400">Super Admin</p>
+            <p className="text-sm font-bold text-white">{displayName}</p>
+            <p className="text-xs text-gray-400">{displayRole}</p>
           </div>
 
-          <div className="h-10 w-10 overflow-hidden rounded-full border-2 border-primary">
-            <img
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuB90K3QwAqWAmwWUAv0gLg8IZ4oSInhoMfVgmPPysyLhgmkFzQG-Nmr6r63mVupGGwj8ZAAHYLI_vhXcFLLzD2SZLM522-X9E270K5c70mkeQWJrZDSTrXFIshFAKWn4FE8aB5g0YcjpjfMAI8D7_cxzUlnuZ1HaCeJyDGEFqYwyNeHiS7Z0oZRN4N-sXoFiQZd2xh6npqg8c1wftxrzzqbgL7OkIJC7C_JqRXMrHxHHP2i5YMfbO8632TSWSCluw2529kN9PC08rU"
-              alt="Admin Avatar"
-              className="h-full w-full object-cover"
-            />
+          <div className="h-10 w-10 overflow-hidden rounded-full border-2 border-primary bg-surface-dark flex items-center justify-center">
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt="Admin Avatar"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <span className="text-sm font-bold text-white">{initials}</span>
+            )}
           </div>
         </div>
       </div>

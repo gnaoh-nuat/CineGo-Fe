@@ -64,7 +64,7 @@ const SummaryApi = {
 
   // Dashboard Stats (external service)
   getDashboardStats: {
-    url: 'https://anjava.io.vn/v1/stats/dashboard',
+    url: "https://anjava.io.vn/v1/stats/dashboard",
     method: "get",
   },
 
@@ -83,7 +83,7 @@ const SummaryApi = {
   },
   updatePeoples: {
     url: `${BASE_URL}/peoples`,
-    method: "put",  
+    method: "put",
   },
   deletePeoples: {
     url: `${BASE_URL}/peoples`,
@@ -106,7 +106,7 @@ const SummaryApi = {
     method: "get",
   },
   getGenreDetail: {
-    url: `${BASE_URL}/genres`, 
+    url: `${BASE_URL}/genres`,
     method: "get",
   },
   // CRUD for admin
@@ -227,6 +227,159 @@ const SummaryApi = {
   getVoucherDetail: {
     url: `${BASE_URL}/vouchers`, // + '/{id}'
     method: "get",
+  },
+
+  createCinemaRoom: {
+    url: `${BASE_URL}/cinema-rooms`,
+    method: "post",
+  },
+  updateCinemaRoom: {
+    url: `${BASE_URL}/cinema-rooms`, // + '/{id}'
+    method: "put",
+  },
+  deleteCinemaRoom: {
+    url: `${BASE_URL}/cinema-rooms`, // + '/{id}'
+    method: "delete",
+  },
+
+  createCinema: {
+    url: `${BASE_URL}/cinemas`,
+    method: "post",
+  },
+  updateCinema: {
+    url: `${BASE_URL}/cinemas`, // + '/{id}'
+    method: "put",
+  },
+  deleteCinema: {
+    url: `${BASE_URL}/cinemas`, // + '/{id}'
+    method: "delete",
+  },
+
+  createFood: {
+    url: `${BASE_URL}/foods`,
+    method: "post",
+  },
+  updateFood: {
+    url: `${BASE_URL}/foods`, // + '/{id}'
+    method: "put",
+  },
+  deleteFood: {
+    url: `${BASE_URL}/foods`, // + '/{id}'
+    method: "delete",
+  },
+
+  retryPayment: {
+    url: `${BASE_URL}/orders`, // + '/{id}/retry-payment'
+    method: "post",
+  },
+  cancelOrder: {
+    url: `${BASE_URL}/orders`, // + '/{id}/cancel'
+    method: "delete",
+  },
+  checkInTicket: {
+    url: `${BASE_URL}/orders/check-in`,
+    method: "post",
+  },
+  // API lấy tất cả đơn hàng cho Admin (khác với getOrderHistory của user)
+  getAllOrders: {
+    url: `${BASE_URL}/orders`,
+    method: "get",
+  },
+
+  createProvince: {
+    url: `${BASE_URL}/provinces`,
+    method: "post",
+  },
+  updateProvince: {
+    url: `${BASE_URL}/provinces`, // + '/{id}'
+    method: "put",
+  },
+  deleteProvince: {
+    url: `${BASE_URL}/provinces`, // + '/{id}'
+    method: "delete",
+  },
+
+  // QR Code
+  generateQr: {
+    url: `${BASE_URL}/qr/generate`,
+    method: "post",
+  },
+  // Seat Management
+  generateSeats: {
+    url: `${BASE_URL}/seats/room`, // + '/{roomId}'
+    method: "post",
+  },
+  updateSeatsBatch: {
+    url: `${BASE_URL}/seats/room`, // + '/{roomId}'
+    method: "put",
+  },
+  deleteSeatsBatch: {
+    url: `${BASE_URL}/seats/room`, // + '/{roomId}'
+    method: "delete",
+  },
+
+  getShowtimeScheduler: {
+    url: `${BASE_URL}/showtimes/scheduler`,
+    method: "get",
+  },
+  createShowtime: {
+    url: `${BASE_URL}/showtimes`,
+    method: "post",
+  },
+  updateShowtime: {
+    url: `${BASE_URL}/showtimes`, // + '/{id}'
+    method: "put",
+  },
+  deleteShowtime: {
+    url: `${BASE_URL}/showtimes`, // + '/{id}'
+    method: "delete",
+  },
+
+  getMonthlyRevenue: {
+    url: `${BASE_URL}/stats/monthly-revenue`,
+    method: "get",
+  },
+  getTopMovies: {
+    url: `${BASE_URL}/stats/top-movies`,
+    method: "get",
+  },
+  getTopCinemas: {
+    url: `${BASE_URL}/stats/top-cinemas`,
+    method: "get",
+  },
+  getNewestOrders: {
+    url: `${BASE_URL}/stats/newest-orders`,
+    method: "get",
+  },
+
+  createUser: {
+    url: `${BASE_URL}/users`,
+    method: "post",
+  },
+  getAllUsers: {
+    url: `${BASE_URL}/users`,
+    method: "get",
+  },
+  deleteUser: {
+    url: `${BASE_URL}/users`, // + '/{id}'
+    method: "delete",
+  },
+
+  createVoucher: {
+    url: `${BASE_URL}/vouchers`,
+    method: "post",
+  },
+  getAllVouchers: {
+    url: `${BASE_URL}/vouchers`,
+    method: "get",
+  },
+  updateVoucher: {
+    url: `${BASE_URL}/vouchers`, // + '/{id}'
+    method: "put",
+  },
+  deleteVoucher: {
+    url: `${BASE_URL}/vouchers`, // + '/{id}'
+    method: "delete",
   },
 };
 
