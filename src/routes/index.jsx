@@ -19,6 +19,9 @@ import PaymentResult from "../pages/PaymentResult";
 import PaymentReturn from "../pages/PaymentReturn";
 
 import Dashboard from "../pages/admin/Dashboard";
+import TheaterList from "../pages/admin/TheaterList";
+import CinemaRooms from "../pages/admin/CinemaRooms";
+import Provinces from "../pages/admin/Provinces";
 import MovieManagement from "../pages/admin/MovieManagement";
 import PeopleManagement from "@/pages/admin/PeopleManagement";
 import GenreManagement from "@/pages/admin/GenreManagement";
@@ -60,7 +63,9 @@ const router = createBrowserRouter([
           { path: "movies", element: <MovieManagement /> },
           { path: "genres", element: <GenreManagement /> },
           { path: "people", element: <PeopleManagement /> },
-          { path: "theaters", element: <div>Quản lý Rạp</div> },
+          { path: "theaters", element: <TheaterList /> },
+          { path: "rooms", element: <CinemaRooms /> },
+          { path: "provinces", element: <Provinces /> },
           { path: "showtimes", element: <div>Quản lý Lịch chiếu</div> },
           { path: "foods", element: <FoodManagement /> },
           { path: "vouchers", element: <VoucherManagement /> },

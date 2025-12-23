@@ -16,7 +16,16 @@ const AdminSidebar = () => {
     [location.pathname]
   );
 
+  const isTheaterRoute = useMemo(
+    () =>
+      location.pathname.startsWith("/admin/theaters") ||
+      location.pathname.startsWith("/admin/rooms") ||
+      location.pathname.startsWith("/admin/provinces"),
+    [location.pathname]
+  );
+
   const [openMovieMenu, setOpenMovieMenu] = useState(isMovieRoute);
+  const [openTheaterMenu, setOpenTheaterMenu] = useState(isTheaterRoute);
 
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition
@@ -106,13 +115,72 @@ const AdminSidebar = () => {
           )}
         </div>
 
-        {/* Rạp */}
-        <NavLink to="/admin/theaters" className={navLinkClass}>
-          <span className="material-symbols-outlined text-lg">
-            theater_comedy
-          </span>
-          Rạp
-        </NavLink>
+        {/* Menu Rạp */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setOpenTheaterMenu((prev) => !prev)}
+            className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${
+              openTheaterMenu || isTheaterRoute
+                ? "bg-white/5 text-white"
+                : "text-gray-400 hover:bg-white/5 hover:text-white"
+            }`}
+            aria-expanded={openTheaterMenu || isTheaterRoute}
+          >
+            <span className="material-symbols-outlined text-lg">
+              theater_comedy
+            </span>
+            <span className="flex-1 text-left">Rạp</span>
+            <span
+              className={`material-symbols-outlined text-[20px] transition-transform duration-300 ${
+                openTheaterMenu || isTheaterRoute ? "rotate-180" : "rotate-0"
+              }`}
+            >
+              expand_more
+            </span>
+          </button>
+
+          {(openTheaterMenu || isTheaterRoute) && (
+            <div className="pb-2 pt-1 space-y-1">
+              <NavLink
+                to="/admin/theaters"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded-xl pl-12 pr-4 py-2 text-sm transition-colors ${
+                    isActive
+                      ? "text-primary font-bold bg-white/5"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`
+                }
+              >
+                Danh sách rạp
+              </NavLink>
+              <NavLink
+                to="/admin/rooms"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded-xl pl-12 pr-4 py-2 text-sm transition-colors ${
+                    isActive
+                      ? "text-primary font-bold bg-white/5"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`
+                }
+              >
+                Phòng chiếu
+              </NavLink>
+              <NavLink
+                to="/admin/provinces"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded-xl pl-12 pr-4 py-2 text-sm transition-colors ${
+                    isActive
+                      ? "text-primary font-bold bg-white/5"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`
+                }
+              >
+                Tỉnh / Thành
+              </NavLink>
+            </div>
+          )}
+        </div>
 
         {/* Lịch chiếu */}
         <NavLink to="/admin/showtimes" className={navLinkClass}>

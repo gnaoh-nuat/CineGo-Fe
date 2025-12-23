@@ -144,6 +144,18 @@ const SummaryApi = {
     url: `${BASE_URL}/cinemas`, // + '/{id}'
     method: "get",
   },
+  createCinema: {
+    url: `${BASE_URL}/cinemas`,
+    method: "post",
+  },
+  updateCinema: {
+    url: `${BASE_URL}/cinemas`, // + '/{id}'
+    method: "put",
+  },
+  deleteCinema: {
+    url: `${BASE_URL}/cinemas`, // + '/{id}'
+    method: "delete",
+  },
   getCinemaRooms: {
     url: `${BASE_URL}/cinema-rooms`, // + '/{id}'
     method: "get",

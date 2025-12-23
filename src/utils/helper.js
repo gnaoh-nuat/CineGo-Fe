@@ -369,5 +369,13 @@ export const authenticatedFetch = (input, init = {}) => {
   const token = localStorage.getItem("accessToken");
   const headers = new Headers(init.headers || {});
   if (token) headers.set("Authorization", `Bearer ${token}`);
+
+  // Automatically mark JSON requests so backend can parse body;
+  // skip for FormData to avoid breaking file uploads.
+  const isFormData = init?.body instanceof FormData;
+  if (init?.body && !isFormData && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+
   return fetch(input, { ...init, headers });
 };
