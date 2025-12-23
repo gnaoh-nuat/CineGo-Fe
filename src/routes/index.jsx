@@ -25,6 +25,7 @@ import GenreManagement from "@/pages/admin/GenreManagement";
 import UserManagement from "@/pages/admin/UserManagement";
 import VoucherManagement from "@/pages/admin/VoucherManagement";
 import FoodManagement from "@/pages/admin/FoodManagement";
+import OrderManagement from "@/pages/admin/OrderManagement";
 
 const router = createBrowserRouter([
   {
@@ -64,7 +65,7 @@ const router = createBrowserRouter([
           { path: "foods", element: <FoodManagement /> },
           { path: "vouchers", element: <VoucherManagement /> },
           { path: "checkin", element: <div>Check-in vé</div> },
-          { path: "orders", element: <div>Quản lý Đơn hàng</div> },
+          { path: "orders", element: <OrderManagement /> },
           { path: "users", element: <UserManagement /> },
         ],
       },

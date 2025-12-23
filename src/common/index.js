@@ -212,6 +212,10 @@ const SummaryApi = {
     url: `${BASE_URL}/orders`, // + '/{id}'
     method: "get",
   },
+  getOrders: {
+    url: `${BASE_URL}/orders`, // query: page, size, status
+    method: "get",
+  },
 
   // Seat APIs
   getSeatsByRoom: {
