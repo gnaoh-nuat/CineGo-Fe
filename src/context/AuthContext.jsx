@@ -29,6 +29,15 @@ export const AuthProvider = ({ children }) => {
         },
       });
 
+      if (response.status === 401) {
+        // Token hết hạn hoặc không hợp lệ -> xóa token và kết thúc sớm
+        console.warn("Auth token invalid/expired, logging out");
+        setUser(null);
+        localStorage.removeItem("accessToken");
+        setLoading(false);
+        return;
+      }
+
       const result = await response.json();
 
       if (result.success) {

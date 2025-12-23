@@ -29,6 +29,7 @@ import UserManagement from "@/pages/admin/UserManagement";
 import VoucherManagement from "@/pages/admin/VoucherManagement";
 import FoodManagement from "@/pages/admin/FoodManagement";
 import OrderManagement from "@/pages/admin/OrderManagement";
+import ShowtimesManagement from "../pages/admin/ShowtimesManagement";
 
 const router = createBrowserRouter([
   {
@@ -66,7 +67,7 @@ const router = createBrowserRouter([
           { path: "theaters", element: <TheaterList /> },
           { path: "rooms", element: <CinemaRooms /> },
           { path: "provinces", element: <Provinces /> },
-          { path: "showtimes", element: <div>Quản lý Lịch chiếu</div> },
+          { path: "showtimes", element: <ShowtimesManagement /> },
           { path: "foods", element: <FoodManagement /> },
           { path: "vouchers", element: <VoucherManagement /> },
           { path: "checkin", element: <div>Check-in vé</div> },
