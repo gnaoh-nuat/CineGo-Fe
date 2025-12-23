@@ -1,16 +1,22 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { toast } from "react-toastify";
+import jsQR from "jsqr";
 
 const QRScanner = ({ onDetected, scanning, onScanningChange }) => {
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const rafRef = useRef(null);
+  const canvasRef = useRef(null);
   const [error, setError] = useState("");
   const [isSupported, setIsSupported] = useState(true);
 
   // Hàm dọn dẹp camera triệt để
   const stopCamera = useCallback(() => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    // Xóa timer loop
+    if (rafRef.current) {
+      clearTimeout(rafRef.current);
+      rafRef.current = null;
+    }
 
     if (streamRef.current) {
       const tracks = streamRef.current.getTracks();
@@ -27,40 +33,57 @@ const QRScanner = ({ onDetected, scanning, onScanningChange }) => {
 
   // Dọn dẹp khi unmount
   useEffect(() => {
-    // Kiểm tra trình duyệt có hỗ trợ API quét mã không
-    if (!("BarcodeDetector" in window)) {
+    // Kiểm tra trình duyệt có hỗ trợ getUserMedia không
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       setIsSupported(false);
-      setError(
-        "Trình duyệt không hỗ trợ quét QR tự động (Cần Chrome/Edge/Android)."
-      );
+      setError("Trình duyệt không hỗ trợ truy cập Camera (cần HTTPS hoặc localhost).");
     }
     return () => stopCamera();
   }, [stopCamera]);
 
-  const scanLoop = useCallback(
-    async (detector) => {
-      if (!videoRef.current || !streamRef.current) return;
+  const scanLoop = useCallback(() => {
+    if (!videoRef.current || !streamRef.current) return;
 
-      // Chỉ quét khi video đã sẵn sàng dữ liệu
-      if (videoRef.current.readyState === videoRef.current.HAVE_ENOUGH_DATA) {
-        try {
-          const codes = await detector.detect(videoRef.current);
-          if (codes?.length > 0) {
-            const value = codes[0].rawValue;
-            if (value) {
-              stopCamera();
-              onDetected?.(value);
-              return;
-            }
-          }
-        } catch (err) {
-          // Bỏ qua lỗi detect từng frame
+    // Chỉ quét khi video đã sẵn sàng dữ liệu
+    if (videoRef.current.readyState === videoRef.current.HAVE_ENOUGH_DATA) {
+      try {
+        // Init canvas nếu chưa có
+        if (!canvasRef.current) {
+          canvasRef.current = document.createElement("canvas");
         }
+        const canvas = canvasRef.current;
+        const video = videoRef.current;
+
+        // Cập nhật kích thước canvas theo video
+        if (canvas.width !== video.videoWidth) canvas.width = video.videoWidth;
+        if (canvas.height !== video.videoHeight) canvas.height = video.videoHeight;
+
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Lấy dữ liệu pixel để quét
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        // Sử dụng jsQR để tìm mã
+        const code = jsQR(imageData.data, imageData.width, imageData.height, {
+          inversionAttempts: "dontInvert",
+        });
+
+        if (code && code.data) {
+          stopCamera();
+          onDetected?.(code.data);
+          return;
+        }
+      } catch (err) {
+        console.error("Scan error:", err);
       }
-      rafRef.current = requestAnimationFrame(() => scanLoop(detector));
-    },
-    [onDetected, stopCamera]
-  );
+    }
+
+    // Loop lại sau 100ms (khoảng 10 FPS) để tiết kiệm CPU
+    rafRef.current = setTimeout(() => {
+      scanLoop();
+    }, 100);
+  }, [onDetected, stopCamera]);
 
   const startCamera = async () => {
     setError("");
@@ -78,21 +101,22 @@ const QRScanner = ({ onDetected, scanning, onScanningChange }) => {
 
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        // Chờ metadata load xong mới play để tránh lỗi màn hình đen
+        // Chờ metadata load xong mới play
         videoRef.current.onloadedmetadata = () => {
-          videoRef.current.play().catch((e) => console.error("Play error:", e));
+          videoRef.current.play()
+            .then(() => {
+              // Bắt đầu vòng lặp quét sau khi video chạy
+              scanLoop();
+            })
+            .catch((e) => console.error("Play error:", e));
         };
       }
 
       if (onScanningChange) onScanningChange(true);
 
-      if ("BarcodeDetector" in window) {
-        const detector = new window.BarcodeDetector({ formats: ["qr_code"] });
-        scanLoop(detector);
-      }
     } catch (err) {
       console.error("Camera error:", err);
-      setError("Không thể truy cập camera. Vui lòng kiểm tra quyền.");
+      setError("Không thể truy cập camera. Vui lòng kiểm tra quyền truy cập.");
       toast.error("Lỗi: Không thể mở camera.");
       stopCamera();
     }
@@ -109,14 +133,12 @@ const QRScanner = ({ onDetected, scanning, onScanningChange }) => {
         </h3>
         <div className="flex items-center gap-2 text-xs">
           <span
-            className={`size-2.5 rounded-full ${
-              scanning ? "bg-success animate-pulse" : "bg-white/20"
-            }`}
+            className={`size-2.5 rounded-full ${scanning ? "bg-success animate-pulse" : "bg-white/20"
+              }`}
           />
           <span
-            className={`font-medium ${
-              scanning ? "text-success" : "text-white/40"
-            }`}
+            className={`font-medium ${scanning ? "text-success" : "text-white/40"
+              }`}
           >
             {scanning ? "Đang quét..." : "Chờ kích hoạt"}
           </span>
@@ -128,12 +150,10 @@ const QRScanner = ({ onDetected, scanning, onScanningChange }) => {
         <div className="relative w-full h-full max-h-[350px] rounded-lg overflow-hidden bg-black flex items-center justify-center">
           <video
             ref={videoRef}
-            className={`w-full h-full object-cover transform scale-100 transition-opacity duration-500 ${
-              scanning ? "opacity-100" : "opacity-0"
-            }`}
+            className={`w-full h-full object-cover transform scale-100 transition-opacity duration-500 ${scanning ? "opacity-100" : "opacity-0"
+              }`}
             muted
             playsInline
-            autoPlay
           />
 
           {/* Hiệu ứng tia quét Laser & Khung ngắm */}
@@ -163,7 +183,7 @@ const QRScanner = ({ onDetected, scanning, onScanningChange }) => {
               </p>
               {!isSupported && (
                 <p className="text-xs text-warning bg-warning/10 px-3 py-1.5 rounded-lg border border-warning/20">
-                  Trình duyệt này không hỗ trợ API quét tự động.
+                  Trình duyệt này có thể không hỗ trợ Camera.
                 </p>
               )}
             </div>
@@ -181,6 +201,7 @@ const QRScanner = ({ onDetected, scanning, onScanningChange }) => {
             <button
               onClick={startCamera}
               type="button"
+              disabled={!isSupported}
               className="bg-primary hover:bg-red-600 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-primary/20 hover:shadow-primary/40 flex items-center gap-2 transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span className="material-symbols-outlined">videocam</span>
