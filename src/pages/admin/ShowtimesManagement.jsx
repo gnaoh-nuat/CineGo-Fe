@@ -35,6 +35,7 @@ const normalizeShowtime = (item) => {
     item?.movie_duration ||
     item?.movieDuration ||
     item?.movie?.duration ||
+    item?.Movie?.duration_minutes ||
     120;
   const start = startRaw ? new Date(startRaw) : null;
   const end = start
@@ -48,6 +49,7 @@ const normalizeShowtime = (item) => {
       item?.movie_title ||
       item?.movieTitle ||
       item?.movie?.title ||
+      item?.Movie?.title ||
       "(Chưa có tên phim)",
     roomName:
       item?.room_name ||
@@ -57,10 +59,11 @@ const normalizeShowtime = (item) => {
       "Phòng ?",
     roomId: item?.room_id || item?.room?.id,
     movieId: item?.movie_id || item?.movie?.id,
+    // Scheduler trả nested Movie; giữ price dạng number khi render
     format: toUpperSafe(
       item?.format || item?.movie_format || item?.type || "2D"
     ),
-    price: item?.price || 0,
+    price: Number(item?.price || 0),
     start,
     end,
     duration,

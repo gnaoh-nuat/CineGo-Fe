@@ -30,6 +30,7 @@ import VoucherManagement from "@/pages/admin/VoucherManagement";
 import FoodManagement from "@/pages/admin/FoodManagement";
 import OrderManagement from "@/pages/admin/OrderManagement";
 import ShowtimesManagement from "../pages/admin/ShowtimesManagement";
+import CheckIn from "../pages/admin/CheckIn";
 
 const router = createBrowserRouter([
   {
@@ -70,7 +71,7 @@ const router = createBrowserRouter([
           { path: "showtimes", element: <ShowtimesManagement /> },
           { path: "foods", element: <FoodManagement /> },
           { path: "vouchers", element: <VoucherManagement /> },
-          { path: "checkin", element: <div>Check-in vé</div> },
+          { path: "checkin", element: <CheckIn /> },
           { path: "orders", element: <OrderManagement /> },
           { path: "users", element: <UserManagement /> },
         ],
