@@ -27,7 +27,8 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await login(data.email, data.password);
+    const normalizedEmail = data.email.trim().toLowerCase();
+    const response = await login(normalizedEmail, data.password);
 
     if (response.success) {
       toast.success(response.message);
@@ -62,6 +63,7 @@ const Login = () => {
           value={data.email}
           onChange={handleOnChange}
           icon={<MdEmail className="text-xl" />}
+          helperText="Sinh viên dùng email @stu.ptit.edu.vn (Admin đăng nhập bình thường)"
         />
 
         {/* Password */}

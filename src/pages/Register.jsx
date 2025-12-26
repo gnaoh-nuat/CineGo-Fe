@@ -17,6 +17,11 @@ import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 
 const Register = () => {
+  const PTIT_DOMAIN = "@stu.ptit.edu.vn";
+
+  const isPtitEmail = (email = "") =>
+    email.toLowerCase().trim().endsWith(PTIT_DOMAIN);
+
   const [data, setData] = useState({
     full_name: "",
     email: "",
@@ -39,13 +44,19 @@ const Register = () => {
       return;
     }
 
+    const normalizedEmail = data.email.trim().toLowerCase();
+    if (!isPtitEmail(normalizedEmail)) {
+      toast.error("Chỉ chấp nhận email sinh viên @stu.ptit.edu.vn");
+      return;
+    }
+
     try {
       const response = await fetch(SummaryApi.register.url, {
         method: SummaryApi.register.method,
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           full_name: data.full_name,
-          email: data.email,
+          email: normalizedEmail,
           phone: data.phone,
           password: data.password,
           confirm_password: data.confirm_password,
@@ -97,6 +108,7 @@ const Register = () => {
             value={data.email}
             onChange={handleOnChange}
             icon={<MdEmail className="text-xl" />}
+            helperText="Chỉ chấp nhận email sinh viên @stu.ptit.edu.vn"
           />
 
           <AuthInput

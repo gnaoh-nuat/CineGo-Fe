@@ -48,6 +48,11 @@ const AdminSidebar = () => {
           Tổng quan
         </NavLink>
 
+        <NavLink to="/admin/behaviors" className={navLinkClass}>
+          <span className="material-symbols-outlined text-lg">analytics</span>
+          Hành vi
+        </NavLink>
+
         {/* Menu Phim với toggle (accessible, keyboard-friendly) */}
         <div className="relative">
           <button

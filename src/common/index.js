@@ -408,6 +408,20 @@ const SummaryApi = {
     method: "get",
   },
 
+  // User behavior tracking
+  behaviorLog: {
+    url: `${BASE_URL}/behaviors/log`,
+    method: "post",
+  },
+  behaviorStats: {
+    url: `${BASE_URL}/behaviors/stats`,
+    method: "get",
+  },
+  behaviors: {
+    url: `${BASE_URL}/behaviors`,
+    method: "get",
+  },
+
   createUser: {
     url: `${BASE_URL}/users`,
     method: "post",

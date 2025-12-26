@@ -12,6 +12,7 @@ const AuthInput = ({
   icon,
   rightElement, // Dùng cho link "Quên mật khẩu?" ở phía trên label
   required = true,
+  helperText,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPasswordType = type === "password";
@@ -61,6 +62,10 @@ const AuthInput = ({
           </button>
         )}
       </div>
+
+      {helperText ? (
+        <p className="text-xs text-white/50 leading-relaxed">{helperText}</p>
+      ) : null}
     </div>
   );
 };
