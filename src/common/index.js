@@ -437,6 +437,10 @@ const SummaryApi = {
     url: `${BASE_URL}/vouchers`, // + '/{id}'
     method: "delete",
   },
+  getUserActivityLogs: {
+    url: `${BASE_URL}/users/activity-logs`,
+    method: "get",
+  },
 };
 
 export default SummaryApi;

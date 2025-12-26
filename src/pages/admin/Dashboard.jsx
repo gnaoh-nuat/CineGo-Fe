@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import SummaryApi from "@/common";
-import { authenticatedFetch, formatCurrency } from "@/utils/helper";
+import {
+  authenticatedFetch,
+  formatCurrency,
+  formatDateTime,
+} from "@/utils/helper";
 
 // Import các component con mới tách
 import MetricCard from "../../components/admin/Dashboard/MetricCard";
@@ -25,6 +29,7 @@ export default function Dashboard() {
   const [topMovies, setTopMovies] = useState([]);
   const [topCinemas, setTopCinemas] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [activityLogs, setActivityLogs] = useState([]);
 
   const currentYear = new Date().getFullYear();
 
@@ -32,25 +37,41 @@ export default function Dashboard() {
     setLoading(true);
     setError("");
     try {
-      const [statsRes, monthlyRes, moviesRes, cinemasRes, ordersRes] =
-        await Promise.all([
-          authenticatedFetch(SummaryApi.getDashboardStats.url),
-          authenticatedFetch(
-            `${SummaryApi.getMonthlyRevenue.url}?year=${currentYear}`
-          ),
-          authenticatedFetch(`${SummaryApi.getTopMovies.url}?page=1&size=5`),
-          authenticatedFetch(`${SummaryApi.getTopCinemas.url}?page=1&size=5`),
-          authenticatedFetch(`${SummaryApi.getNewestOrders.url}?page=1&size=8`),
-        ]);
+      const [
+        statsRes,
+        monthlyRes,
+        moviesRes,
+        cinemasRes,
+        ordersRes,
+        logsRes,
+      ] = await Promise.all([
+        authenticatedFetch(SummaryApi.getDashboardStats.url),
+        authenticatedFetch(
+          `${SummaryApi.getMonthlyRevenue.url}?year=${currentYear}`
+        ),
+        authenticatedFetch(`${SummaryApi.getTopMovies.url}?page=1&size=5`),
+        authenticatedFetch(`${SummaryApi.getTopCinemas.url}?page=1&size=5`),
+        authenticatedFetch(`${SummaryApi.getNewestOrders.url}?page=1&size=8`),
+        authenticatedFetch(
+          `${SummaryApi.getUserActivityLogs.url}?page=1&size=10`
+        ),
+      ]);
 
-      const [statsJson, monthlyJson, moviesJson, cinemasJson, ordersJson] =
-        await Promise.all([
-          statsRes.json(),
-          monthlyRes.json(),
-          moviesRes.json(),
-          cinemasRes.json(),
-          ordersRes.json(),
-        ]);
+      const [
+        statsJson,
+        monthlyJson,
+        moviesJson,
+        cinemasJson,
+        ordersJson,
+        logsJson,
+      ] = await Promise.all([
+        statsRes.json(),
+        monthlyRes.json(),
+        moviesRes.json(),
+        cinemasRes.json(),
+        ordersRes.json(),
+        logsRes.json(),
+      ]);
 
       if (statsJson?.success) setStats(statsJson.data || {});
       if (monthlyJson?.success) setMonthly(monthlyJson.data || []);
@@ -60,6 +81,8 @@ export default function Dashboard() {
         setTopCinemas(cinemasJson.data?.items?.slice(0, 5) || []);
       if (ordersJson?.success)
         setOrders(ordersJson.data?.items?.slice(0, 8) || []);
+      if (logsJson?.success)
+        setActivityLogs(logsJson.data?.items || []);
     } catch (err) {
       console.error(err);
       setError("Không thể tải dữ liệu dashboard.");
@@ -243,6 +266,65 @@ export default function Dashboard() {
               </tbody>
             </table>
           </div>
+        </div>
+      </div>
+
+      {/* User Activity Logs */}
+      <div className="rounded-3xl border border-white/10 bg-background-dark/70 p-6 shadow-xl backdrop-blur">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-lg font-bold text-white">Lịch sử hoạt động người dùng</h3>
+          <span className="text-xs text-white/50">Mới nhất</span>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-left text-sm">
+            <thead>
+              <tr className="text-xs uppercase text-white/50">
+                <th className="px-3 py-2 font-semibold">Thời gian</th>
+                <th className="px-3 py-2 font-semibold">Người dùng</th>
+                <th className="px-3 py-2 font-semibold">Hành động</th>
+                <th className="px-3 py-2 font-semibold">Chi tiết</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                [...Array(5)].map((_, i) => (
+                  <tr key={i}>
+                    <td className="px-3 py-3" colSpan={4}>
+                      <div className={`h-6 w-full rounded ${SKELETON_CLASS}`} />
+                    </td>
+                  </tr>
+                ))
+              ) : activityLogs.length ? (
+                activityLogs.map((log) => (
+                  <tr
+                    key={log.id}
+                    className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                  >
+                    <td className="px-3 py-2 text-white/70 whitespace-nowrap">
+                      {formatDateTime(log.timestamp)}
+                    </td>
+                    <td className="px-3 py-2 font-medium text-white">
+                      {log.user?.full_name || "N/A"}
+                    </td>
+                    <td className="px-3 py-2">
+                      <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-white/10 text-white/80">
+                        {log.action_type}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2 text-white/60 truncate max-w-xs" title={log.details}>
+                      {log.details}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td className="px-3 py-4 text-white/60" colSpan={4}>
+                    Chưa có hoạt động nào.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
